@@ -3,11 +3,15 @@ package gg.eclipsemc.eclipsechat.chat;
 import io.papermc.paper.chat.ChatRenderer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +36,15 @@ public class EclipseChatRenderer implements ChatRenderer {
             }
             if (source.hasPermission("eclipsechat.minimessagechat")) {
                 message = MiniMessage.get().parse(messageString);
+            }
+            for (final Player player : Bukkit.getOnlinePlayers()) {
+                player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
+                message = message.replaceText(TextReplacementConfig.builder()
+                        .match(" " + player.getName() + " ")
+                        .replacement(Component.text(" " + player.getName() + " ")
+                                .color(NamedTextColor.YELLOW)
+                                .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover))))
+                        .build());
             }
             this.message = Component.text()
                     .append(Component.text(PlaceholderAPI.setPlaceholders(source, nameFormat))
