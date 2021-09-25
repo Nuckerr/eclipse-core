@@ -72,10 +72,10 @@ public class RGBTab implements Tab {
     }
 
     private FileConfiguration getConfig() {
-        return EclipseChat.getPlugin(EclipseChat.class).getConfig();
+        return eclipseChat.getConfig();
     }
 
     private Logger getLogger() {
-        return EclipseChat.getPlugin(EclipseChat.class).getLogger();
+        return eclipseChat.getLogger();
     }
 }
