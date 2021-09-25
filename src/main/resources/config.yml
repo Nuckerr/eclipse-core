@@ -6,6 +6,4 @@ tab:
 chat:
   enabled: true
   nameformat: "%aqua_player_prefix%%aqua_player_color%%aqua_player_nick%"
-  namehover: "<gray>Name: <yellow>%aqua_player_color%%aqua_player_nick%
-<gray>Rank: <yellow>%aqua_player_rank%
-<gray>Mine: <yellow>%ultraprison_rank%"
+  namehover: "<gray>Name: <yellow>%aqua_player_color%%aqua_player_nick%\n<gray>Rank: <yellow>%aqua_player_rank%\n<gray>Mine: <yellow>%ultraprison_rank%"
