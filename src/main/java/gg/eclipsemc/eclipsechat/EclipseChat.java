@@ -2,6 +2,8 @@ package gg.eclipsemc.eclipsechat;
 
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
+import gg.eclipsemc.eclipsechat.chat.ChatListener;
+import gg.eclipsemc.eclipsechat.chat.EclipseChatRenderer;
 import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -26,6 +28,7 @@ public final class EclipseChat extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         setupPlayerList();
+        setupChat();
         try {
             registerCommands();
         } catch (Exception e) {
@@ -40,19 +43,27 @@ public final class EclipseChat extends JavaPlugin {
     }
 
     private void registerCommands() throws Exception {
-        paperCommandManager = new PaperCommandManager<CommandSender>(
+        paperCommandManager = new PaperCommandManager<>(
                 this, CommandExecutionCoordinator.simpleCoordinator(), Function.identity(), Function.identity());
         paperCommandManager.registerAsynchronousCompletions();
         paperCommandManager.registerBrigadier();
         paperCommandManager.command(
-                paperCommandManager.commandBuilder("reloadtab")
-                .permission("eclipsechat.reloadtab")
-                .handler(c -> {
-                    c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading tab..."));
-                    reloadConfig();
-                    Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadPlayerList);
-                    c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded tab!"));
-                })
+                paperCommandManager.commandBuilder("eclipsechat")
+                        .literal("reload")
+                        .permission("eclipsechat.reload")
+                        .handler(c -> {
+                            c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseChat..."));
+                            reloadConfig();
+                            Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadPlayerList);
+                            Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadChat);
+                            c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseChat!"));
+                        })
+        );
+        paperCommandManager.command(
+                paperCommandManager.commandBuilder("eclipsechat")
+                        .literal("about")
+                        .permission("eclipsechat.about")
+                        .handler(c -> c.getSender().sendMessage(MiniMessage.get().parse("<blue>EclipseChat v" + getDescription().getVersion() + "\n<green>By <rainbow>SimplyMerlin")))
         );
     }
 
@@ -60,10 +71,20 @@ public final class EclipseChat extends JavaPlugin {
         if (getConfig().getBoolean("tab.enabled")) {
             reloadPlayerList();
             getServer().getPluginManager().registerEvents(new PlayerListListener(this), this);
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList);
-            }, 0L, 200L);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
         }
+    }
+
+    public void setupChat() {
+        if (getConfig().getBoolean("chat.enabled")) {
+            reloadChat();
+            Bukkit.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        }
+    }
+
+    public void reloadChat() {
+        EclipseChatRenderer.nameFormat = getConfig().getString("chat.nameformat");
+        EclipseChatRenderer.nameHover = getConfig().getString("chat.namehover");
     }
 
     public void reloadPlayerList() {
