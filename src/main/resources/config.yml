@@ -1,0 +1,5 @@
+tab:
+  enabled: true
+  header: "<red>Epic header!"
+  footer: "<blue>Epic footer!"
+  playername: "%aqua_player_rank% %aqua_player_color%%aqua_player_nick%"

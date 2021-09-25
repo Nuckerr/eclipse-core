@@ -1,0 +1,8 @@
+name: EclipseChat
+version: ${project.version}
+main: gg.eclipsemc.eclipsechat.EclipseChat
+api-version: 1.17
+authors: [ SimplyMerlin ]
+description: Chat plugin for EclipseMC. Also handles tab list.
+website: https://eclipsemc.gg/
+depend: [PlaceholderAPI]
