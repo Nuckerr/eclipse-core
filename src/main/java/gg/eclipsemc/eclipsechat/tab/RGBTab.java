@@ -27,37 +27,11 @@ public class RGBTab implements Tab {
     private String playerListFooter;
     private String tabName;
 
-    private final List<Player> players;
+    private EclipseChat eclipseChat;
 
-    public RGBTab() {
-        this.players = new ArrayList<>();
-
-        String configHeader = getConfig().getString("tab.header");
-        String configFooter = getConfig().getString("tab.footer");
-        getLogger().log(Level.INFO, "Got tab header " + configHeader);
-        getLogger().log(Level.INFO, "Got tab footer " + configFooter);
-        if (configHeader == null || configFooter == null) {
-            playerListHeader = "";
-            playerListFooter = "";
-            return;
-        }
-        playerListHeader = configHeader;
-        playerListFooter = configFooter;
-        tabName = getConfig().getString("tab.playername");
-
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onPlayerLeave(PlayerQuitEvent event) {
-                for (final Player player : players) {
-                    if(player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
-                        players.remove(player);
-                        return;
-                    }
-                }
-            }
-
-        }, JavaPlugin.getPlugin(EclipseChat.class));
+    public RGBTab(EclipseChat eclipseChat) {
+        this.eclipseChat = eclipseChat;
+        reloadPlayerList();
     }
 
     @Override
@@ -89,18 +63,12 @@ public class RGBTab implements Tab {
         playerListHeader = configHeader;
         playerListFooter = configFooter;
         tabName = getConfig().getString("tab.playername");
-        for (final Player player : players) {
-            player.sendPlayerListHeaderAndFooter(getHeader(player), getFooter(player));
-            if (tabName == null) return;
-            player.playerListName(Component.text(PlaceholderAPI.setPlaceholders(player, tabName)));
-        }
     }
 
     @Override
-    public void loadTabList(final Player player) {
+    public void refreshTabList(final Player player) {
         player.sendPlayerListHeaderAndFooter(getHeader(player), getFooter(player));
         player.playerListName(Component.text(PlaceholderAPI.setPlaceholders(player, getName())));
-        players.add(player);
     }
 
     private FileConfiguration getConfig() {

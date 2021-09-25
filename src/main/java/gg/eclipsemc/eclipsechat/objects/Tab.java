@@ -16,5 +16,5 @@ public interface Tab {
 
     void reloadPlayerList();
 
-    void loadTabList(Player player);
+    void refreshTabList(Player player);
 }

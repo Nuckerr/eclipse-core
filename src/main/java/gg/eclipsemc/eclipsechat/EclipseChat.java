@@ -61,6 +61,7 @@ public final class EclipseChat extends JavaPlugin {
                             Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                                 getRgbTab().reloadPlayerList();
                                 getLegacyTab().reloadPlayerList();
+                                refreshPlayerList();
                             });
                             Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadChat);
                             c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseChat!"));
@@ -76,8 +77,8 @@ public final class EclipseChat extends JavaPlugin {
 
     public void setupPlayerList() {
         if (getConfig().getBoolean("tab.enabled")) {
-            legacyTab = new LegacyTab();
-            rgbTab = new RGBTab();
+            legacyTab = new LegacyTab(this);
+            rgbTab = new RGBTab(this);
             getServer().getPluginManager().registerEvents(new PlayerListListener(this), this);
             Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
         }
@@ -97,9 +98,9 @@ public final class EclipseChat extends JavaPlugin {
 
     public void refreshPlayerList(Player player) {
         if(player.getProtocolVersion() >= 735 /* 1.16 */) {
-            rgbTab.loadTabList(player);
+            rgbTab.refreshTabList(player);
         }else {
-            legacyTab.loadTabList(player);
+            legacyTab.refreshTabList(player);
         }
     }
 
