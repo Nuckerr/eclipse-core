@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,10 +22,17 @@ public class EclipseChatRenderer implements ChatRenderer {
     public @NotNull Component render(
             @NotNull final Player source,
             @NotNull final Component sourceDisplayName,
-            @NotNull final Component message,
+            @NotNull Component message,
             @NotNull final Audience viewer
     ) {
         if (this.message == null) {
+            String messageString = PlainTextComponentSerializer.plainText().serialize(message);
+            if (source.hasPermission("eclipsechat.markdown")) {
+                message = MiniMessage.markdown().parse(messageString);
+            }
+            if (source.hasPermission("eclipsechat.minimessagechat")) {
+                message = MiniMessage.get().parse(messageString);
+            }
             this.message = Component.text()
                     .append(Component.text(PlaceholderAPI.setPlaceholders(source, nameFormat))
                             .clickEvent(ClickEvent.suggestCommand("/msg " + source.getName() + " "))
