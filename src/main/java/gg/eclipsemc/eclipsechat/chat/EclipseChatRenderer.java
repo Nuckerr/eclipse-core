@@ -38,13 +38,15 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
-                player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
+                Component hoverComponent = MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover));
                 message = message.replaceText(TextReplacementConfig.builder()
                         .match(" " + player.getName() + " ")
                         .replacement(Component.text(" " + player.getName() + " ")
                                 .color(NamedTextColor.YELLOW)
                                 .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover))))
                         .build());
+                if (message.contains(hoverComponent))
+                    player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
             }
             this.message = Component.text()
                     .append(Component.text(PlaceholderAPI.setPlaceholders(source, nameFormat))
