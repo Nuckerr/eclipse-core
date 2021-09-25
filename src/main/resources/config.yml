@@ -3,6 +3,9 @@ tab:
   header: "\n<gradient:#ffaa00:#ffff55><b>EclipseMC</b></gradient>\n<gold>Players: <yellow>%aqua_player_count%\n"
   footer: "\n<gold>Donate on our store to\n<gold>receive perks and cosmetics\n<gradient:#ffff55:#ffaa00>store.eclipsemc.gg</gradient>\n"
   playername: "%aqua_player_prefix%%aqua_player_color%%aqua_player_nick%"
+  legacy:
+    header: "\n&6EclipseMC\n&6Players: &e%aqua_player_count%\n"
+    footer: "\n&6Donate on our store to \n&6receive perks and cosmetics\n&estore.eclipsemc,gg\n"
 chat:
   enabled: true
   nameformat: "%aqua_player_prefix%%aqua_player_color%%aqua_player_nick%"
