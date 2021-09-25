@@ -96,30 +96,15 @@ public final class EclipseChat extends JavaPlugin {
     }
 
     public void refreshPlayerList(Player player) {
-        try {
-            if(getPlayerProtocolVersion(player) >= 735 /* 1.16 */) {
-                rgbTab.loadTabList(player);
-            }else {
-                legacyTab.loadTabList(player);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        if(player.getProtocolVersion() >= 735 /* 1.16 */) {
+            rgbTab.loadTabList(player);
+        }else {
+            legacyTab.loadTabList(player);
         }
     }
 
     public void refreshPlayerList() {
         Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList);
-    }
-
-    private int getPlayerProtocolVersion(Player player) throws NoSuchFieldException, IllegalAccessException {
-        CraftPlayer craftPlayer = (CraftPlayer) player;
-        EntityPlayer entityPlayer = craftPlayer.getHandle();
-        PlayerConnection connection = entityPlayer.b;
-        NetworkManager networkManager = connection.a;
-        Class<?> networkManagerClass = networkManager.getClass();
-        Field protocolVersionField = networkManagerClass.getDeclaredField("protocolVersion");
-        protocolVersionField.setAccessible(true);
-        return protocolVersionField.getInt(networkManager);
     }
 
     public Tab getLegacyTab() {
