@@ -1,1 +1,1 @@
-"# EclipseChat" 
+# EclipseChat
