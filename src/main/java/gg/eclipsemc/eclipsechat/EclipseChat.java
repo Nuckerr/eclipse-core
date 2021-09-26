@@ -2,6 +2,8 @@ package gg.eclipsemc.eclipsechat;
 
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import gg.eclipsemc.eclipsechat.chat.ChatListener;
 import gg.eclipsemc.eclipsechat.chat.EclipseChatRenderer;
 import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
@@ -19,6 +21,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -97,10 +101,11 @@ public final class EclipseChat extends JavaPlugin {
     }
 
     public void refreshPlayerList(Player player) {
-        if(player.getProtocolVersion() >= 735 /* 1.16 */) {
+        if(Via.getAPI().getPlayerVersion(player.getUniqueId()) >= 735 /* 1.16 */) {
             rgbTab.refreshTabList(player);
         }else {
             legacyTab.refreshTabList(player);
+            System.out.println(player.getName() + " is on legacy");
         }
     }
 
@@ -115,5 +120,6 @@ public final class EclipseChat extends JavaPlugin {
     public Tab getRgbTab() {
         return rgbTab;
     }
+
 
 }
