@@ -9,7 +9,6 @@ import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
 import gg.eclipsemc.eclipsechat.objects.Tab;
 import gg.eclipsemc.eclipsechat.tab.LegacyTab;
 import gg.eclipsemc.eclipsechat.tab.RGBTab;
-import me.activated.core.plugin.AquaCore;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

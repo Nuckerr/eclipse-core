@@ -4,7 +4,6 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.activated.core.api.player.PlayerData;
 import me.activated.core.plugin.AquaCore;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

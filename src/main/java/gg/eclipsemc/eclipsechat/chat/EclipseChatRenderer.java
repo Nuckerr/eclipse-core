@@ -1,7 +1,6 @@
 package gg.eclipsemc.eclipsechat.chat;
 
 import io.papermc.paper.chat.ChatRenderer;
-import me.activated.core.api.player.PlayerData;
 import me.activated.core.plugin.AquaCore;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
