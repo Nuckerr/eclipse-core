@@ -2,26 +2,35 @@ package gg.eclipsemc.eclipsechat;
 
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import gg.eclipsemc.eclipsechat.chat.ChatListener;
 import gg.eclipsemc.eclipsechat.chat.EclipseChatRenderer;
 import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.Component;
+import gg.eclipsemc.eclipsechat.objects.Tab;
+import gg.eclipsemc.eclipsechat.tab.LegacyTab;
+import gg.eclipsemc.eclipsechat.tab.RGBTab;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 
 public final class EclipseChat extends JavaPlugin {
 
-    private String playerListHeader;
-    private String playerListFooter;
-    private String tabName;
     PaperCommandManager<CommandSender> paperCommandManager;
+    private Tab rgbTab;
+    private Tab legacyTab;
 
     @Override
     public void onEnable() {
@@ -53,7 +62,11 @@ public final class EclipseChat extends JavaPlugin {
                         .handler(c -> {
                             c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseChat..."));
                             reloadConfig();
-                            Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadPlayerList);
+                            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                                getRgbTab().reloadPlayerList();
+                                getLegacyTab().reloadPlayerList();
+                                refreshPlayerList();
+                            });
                             Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadChat);
                             c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseChat!"));
                         })
@@ -68,7 +81,8 @@ public final class EclipseChat extends JavaPlugin {
 
     public void setupPlayerList() {
         if (getConfig().getBoolean("tab.enabled")) {
-            reloadPlayerList();
+            legacyTab = new LegacyTab(this);
+            rgbTab = new RGBTab(this);
             getServer().getPluginManager().registerEvents(new PlayerListListener(this), this);
             Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
         }
@@ -86,45 +100,26 @@ public final class EclipseChat extends JavaPlugin {
         EclipseChatRenderer.nameHover = getConfig().getString("chat.namehover");
     }
 
-    public void reloadPlayerList() {
-        String configHeader = getConfig().getString("tab.header");
-        String configFooter = getConfig().getString("tab.footer");
-        getLogger().log(Level.INFO, "Got tab header " + configHeader);
-        getLogger().log(Level.INFO, "Got tab footer " + configFooter);
-        if (configHeader == null || configFooter == null) {
-            playerListHeader = "";
-            playerListFooter = "";
-            return;
-        }
-        playerListHeader = configHeader;
-        playerListFooter = configFooter;
-        tabName = getConfig().getString("tab.playername");
-        for (final Player player : Bukkit.getOnlinePlayers()) {
-            player.sendPlayerListHeaderAndFooter(getPlayerListHeader(player), getPlayerListFooter(player));
-            if (tabName == null) return;
-            player.playerListName(Component.text(PlaceholderAPI.setPlaceholders(player, tabName)));
-        }
-    }
-
     public void refreshPlayerList(Player player) {
-        player.sendPlayerListHeaderAndFooter(getPlayerListHeader(player), getPlayerListFooter(player));
-        player.playerListName(Component.text(PlaceholderAPI.setPlaceholders(player, tabName)));
+        if(Via.getAPI().getPlayerVersion(player.getUniqueId()) >= 735 /* 1.16 */) {
+            rgbTab.refreshTabList(player);
+        }else {
+            legacyTab.refreshTabList(player);
+            System.out.println(player.getName() + " is on legacy");
+        }
     }
 
     public void refreshPlayerList() {
         Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList);
     }
 
-    public Component getPlayerListHeader(Player player) {
-        return MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, playerListHeader));
+    public Tab getLegacyTab() {
+        return legacyTab;
     }
 
-    public Component getPlayerListFooter(Player player) {
-        return MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, playerListFooter));
+    public Tab getRgbTab() {
+        return rgbTab;
     }
 
-    public String getTabName() {
-        return tabName;
-    }
 
 }
