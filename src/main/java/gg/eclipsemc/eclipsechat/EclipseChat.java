@@ -3,7 +3,6 @@ package gg.eclipsemc.eclipsechat;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
 import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import gg.eclipsemc.eclipsechat.chat.ChatListener;
 import gg.eclipsemc.eclipsechat.chat.EclipseChatRenderer;
 import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
@@ -11,18 +10,11 @@ import gg.eclipsemc.eclipsechat.objects.Tab;
 import gg.eclipsemc.eclipsechat.tab.LegacyTab;
 import gg.eclipsemc.eclipsechat.tab.RGBTab;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 

@@ -91,13 +91,6 @@
             <version>4.9.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Adding NMS (Also adds spigot classes again but ignore that) -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
