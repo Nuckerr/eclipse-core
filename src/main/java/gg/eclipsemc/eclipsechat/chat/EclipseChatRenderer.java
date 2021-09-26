@@ -1,6 +1,8 @@
 package gg.eclipsemc.eclipsechat.chat;
 
 import io.papermc.paper.chat.ChatRenderer;
+import me.activated.core.api.player.PlayerData;
+import me.activated.core.plugin.AquaCore;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -14,6 +16,8 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Pattern;
 
 public class EclipseChatRenderer implements ChatRenderer {
 
@@ -38,14 +42,14 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
-                Component hoverComponent = Component.text(" " + player.getName() + " ")
+                Component hoverComponent = Component.text(player.getName())
                         .color(NamedTextColor.YELLOW)
-                        .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover)));
+                        .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, nameHover)));
                 message = message.replaceText(TextReplacementConfig.builder()
-                        .match(" " + player.getName() + " ")
+                        .match(Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE))
                         .replacement(hoverComponent)
                         .build());
-                if (message.contains(hoverComponent))
+                if (message.contains(hoverComponent) && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
                     player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
             }
             this.message = Component.text()
