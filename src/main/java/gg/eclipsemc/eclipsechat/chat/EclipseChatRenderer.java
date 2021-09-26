@@ -42,15 +42,16 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
+                Pattern pattern = Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE);
                 if(!AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).isVanished()) {
                     Component hoverComponent = Component.text(player.getName())
                             .color(NamedTextColor.YELLOW)
                             .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, nameHover)));
                     message = message.replaceText(TextReplacementConfig.builder()
-                            .match(Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE))
+                            .match(pattern)
                             .replacement(hoverComponent)
                             .build());
-                    if (PlainTextComponentSerializer.plainText().serialize(message).contains(PlainTextComponentSerializer.plainText().serialize(hoverComponent))
+                    if (pattern.matcher(PlainTextComponentSerializer.plainText().serialize(message)).find()
                             && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
                         player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
                 }
