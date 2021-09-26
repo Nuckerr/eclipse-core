@@ -17,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Pattern;
+
 public class EclipseChatRenderer implements ChatRenderer {
 
     public static String nameFormat;
@@ -40,11 +42,11 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
-                Component hoverComponent = Component.text(" " + player.getName() + " ")
+                Component hoverComponent = Component.text(player.getName())
                         .color(NamedTextColor.YELLOW)
-                        .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover)));
+                        .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, nameHover)));
                 message = message.replaceText(TextReplacementConfig.builder()
-                        .match(" " + player.getName() + " ")
+                        .match(Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE))
                         .replacement(hoverComponent)
                         .build());
                 if (message.contains(hoverComponent) && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
