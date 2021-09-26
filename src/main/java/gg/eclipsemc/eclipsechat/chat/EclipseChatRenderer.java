@@ -25,6 +25,7 @@ public class EclipseChatRenderer implements ChatRenderer {
 
     Component message;
 
+
     @Override
     public @NotNull Component render(
             @NotNull final Player source,
@@ -41,15 +42,18 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
-                Component hoverComponent = Component.text(player.getName())
-                        .color(NamedTextColor.YELLOW)
-                        .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, nameHover)));
-                message = message.replaceText(TextReplacementConfig.builder()
-                        .match(Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE))
-                        .replacement(hoverComponent)
-                        .build());
-                if (message.contains(hoverComponent) && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
-                    player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
+                if(!AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).isVanished()) {
+                    Component hoverComponent = Component.text(player.getName())
+                            .color(NamedTextColor.YELLOW)
+                            .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(player, nameHover)));
+                    message = message.replaceText(TextReplacementConfig.builder()
+                            .match(Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE))
+                            .replacement(hoverComponent)
+                            .build());
+                    if (PlainTextComponentSerializer.plainText().serialize(message).contains(PlainTextComponentSerializer.plainText().serialize(hoverComponent))
+                            && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
+                        player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
+                }
             }
             this.message = Component.text()
                     .append(Component.text(PlaceholderAPI.setPlaceholders(source, nameFormat))

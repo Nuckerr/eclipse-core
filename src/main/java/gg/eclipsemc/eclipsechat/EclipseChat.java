@@ -97,7 +97,6 @@ public final class EclipseChat extends JavaPlugin {
             rgbTab.refreshTabList(player);
         }else {
             legacyTab.refreshTabList(player);
-            System.out.println(player.getName() + " is on legacy");
         }
     }
 
