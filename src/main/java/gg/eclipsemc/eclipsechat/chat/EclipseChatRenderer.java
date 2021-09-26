@@ -3,7 +3,6 @@ package gg.eclipsemc.eclipsechat.chat;
 import io.papermc.paper.chat.ChatRenderer;
 import me.activated.core.api.player.PlayerData;
 import me.activated.core.plugin.AquaCore;
-import me.activated.core.plugin.AquaCoreAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -41,9 +40,6 @@ public class EclipseChatRenderer implements ChatRenderer {
                 message = MiniMessage.get().parse(messageString);
             }
             for (final Player player : Bukkit.getOnlinePlayers()) {
-                PlayerData data = AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId());
-                if(!data.getMessageSystem().isChatMention())
-                    continue;
                 Component hoverComponent = Component.text(" " + player.getName() + " ")
                         .color(NamedTextColor.YELLOW)
                         .hoverEvent(MiniMessage.get().parse(PlaceholderAPI.setPlaceholders(source, nameHover)));
@@ -51,7 +47,7 @@ public class EclipseChatRenderer implements ChatRenderer {
                         .match(" " + player.getName() + " ")
                         .replacement(hoverComponent)
                         .build());
-                if (message.contains(hoverComponent))
+                if (message.contains(hoverComponent) && AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).getMessageSystem().isChatMention())
                     player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
             }
             this.message = Component.text()
