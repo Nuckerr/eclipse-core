@@ -1,5 +1,5 @@
 # EclipseChat
-##Features:
+## Features:
 * Tab list
 * Chat with hover components
 ##How to use:
