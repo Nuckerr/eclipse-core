@@ -21,7 +21,10 @@ public class ChatListener implements Listener {
         for (final Audience viewer : e.viewers()) {
             if(viewer instanceof Player player) {
                 PlayerData data = AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId());
+
                 if(!data.getMessageSystem().isGlobalChat())
+                    e.viewers().remove(viewer);
+                if(data.getMessageSystem().isIgnoring(e.getPlayer().getName()))
                     e.viewers().remove(viewer);
             }
         }
