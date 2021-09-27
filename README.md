@@ -1,7 +1,7 @@
 # EclipseChat
 ## Features:
 * Tab list
-* Chat with hover components
+* Chat with hover components  
 ##How to use:
 Everything in the config file goes through MiniMessage and through placeholder api. This will allow you to use full RGB in any 
 feature of this plugin. See the documentation of MiniMessage here: <https://docs.adventure.kyori.net/minimessage>
