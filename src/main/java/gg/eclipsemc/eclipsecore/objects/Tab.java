@@ -1,4 +1,4 @@
-package gg.eclipsemc.eclipsechat.objects;
+package gg.eclipsemc.eclipsecore.objects;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;

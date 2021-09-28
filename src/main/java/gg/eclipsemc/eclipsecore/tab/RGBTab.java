@@ -1,7 +1,7 @@
-package gg.eclipsemc.eclipsechat.tab;
+package gg.eclipsemc.eclipsecore.tab;
 
-import gg.eclipsemc.eclipsechat.EclipseChat;
-import gg.eclipsemc.eclipsechat.objects.Tab;
+import gg.eclipsemc.eclipsecore.EclipseCore;
+import gg.eclipsemc.eclipsecore.objects.Tab;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -14,16 +14,16 @@ import java.util.logging.Logger;
 /**
  * @author Nucker
  */
-public class LegacyTab implements Tab {
+public class RGBTab implements Tab {
 
     private String playerListHeader;
     private String playerListFooter;
     private String tabName;
 
-    private EclipseChat eclipseChat;
+    private EclipseCore eclipseCore;
 
-    public LegacyTab(EclipseChat eclipseChat) {
-        this.eclipseChat = eclipseChat;
+    public RGBTab(EclipseCore eclipseCore) {
+        this.eclipseCore = eclipseCore;
         reloadPlayerList();
     }
 
@@ -44,8 +44,8 @@ public class LegacyTab implements Tab {
 
     @Override
     public void reloadPlayerList() {
-        String configHeader = getConfig().getString("tab.legacy.header");
-        String configFooter = getConfig().getString("tab.legacy.footer");
+        String configHeader = getConfig().getString("tab.header");
+        String configFooter = getConfig().getString("tab.footer");
         getLogger().log(Level.INFO, "Got tab header " + configHeader);
         getLogger().log(Level.INFO, "Got tab footer " + configFooter);
         if (configHeader == null || configFooter == null) {
@@ -55,7 +55,7 @@ public class LegacyTab implements Tab {
         }
         playerListHeader = configHeader;
         playerListFooter = configFooter;
-        tabName = getConfig().getString("tab.legacy.playername");
+        tabName = getConfig().getString("tab.playername");
     }
 
     @Override
@@ -65,10 +65,10 @@ public class LegacyTab implements Tab {
     }
 
     private FileConfiguration getConfig() {
-        return eclipseChat.getConfig();
+        return eclipseCore.getConfig();
     }
 
     private Logger getLogger() {
-        return eclipseChat.getLogger();
+        return eclipseCore.getLogger();
     }
 }

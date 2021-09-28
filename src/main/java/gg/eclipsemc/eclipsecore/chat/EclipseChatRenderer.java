@@ -1,7 +1,6 @@
-package gg.eclipsemc.eclipsechat.chat;
+package gg.eclipsemc.eclipsecore.chat;
 
 import io.papermc.paper.chat.ChatRenderer;
-import me.activated.core.plugin.AquaCore;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -35,12 +34,13 @@ public class EclipseChatRenderer implements ChatRenderer {
     ) {
         if (this.message == null) {
             String messageString = PlainTextComponentSerializer.plainText().serialize(message);
-            if (source.hasPermission("eclipsechat.markdown")) {
+            if (source.hasPermission("eclipsecore.chat.markdown")) {
                 message = MiniMessage.markdown().parse(messageString);
             }
-            if (source.hasPermission("eclipsechat.minimessagechat")) {
+            if (source.hasPermission("eclipsecore.chat.minimessagechat")) {
                 message = MiniMessage.get().parse(messageString);
             }
+            /*
             for (final Player player : Bukkit.getOnlinePlayers()) {
                 Pattern pattern = Pattern.compile("\\b(?=\\w)" + player.getName() + "\\b(?<=\\w)", Pattern.MULTILINE);
                 if(!AquaCore.INSTANCE.getPlayerManagement().getPlayerData(player.getUniqueId()).isVanished()) {
@@ -56,6 +56,7 @@ public class EclipseChatRenderer implements ChatRenderer {
                         player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
                 }
             }
+             */
             this.message = Component.text()
                     .append(Component.text(PlaceholderAPI.setPlaceholders(source, nameFormat))
                             .clickEvent(ClickEvent.suggestCommand("/msg " + source.getName() + " "))

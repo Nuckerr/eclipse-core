@@ -1,14 +1,14 @@
-package gg.eclipsemc.eclipsechat;
+package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
 import com.viaversion.viaversion.api.Via;
-import gg.eclipsemc.eclipsechat.chat.ChatListener;
-import gg.eclipsemc.eclipsechat.chat.EclipseChatRenderer;
-import gg.eclipsemc.eclipsechat.listener.PlayerListListener;
-import gg.eclipsemc.eclipsechat.objects.Tab;
-import gg.eclipsemc.eclipsechat.tab.LegacyTab;
-import gg.eclipsemc.eclipsechat.tab.RGBTab;
+import gg.eclipsemc.eclipsecore.chat.ChatListener;
+import gg.eclipsemc.eclipsecore.chat.EclipseChatRenderer;
+import gg.eclipsemc.eclipsecore.listener.PlayerListListener;
+import gg.eclipsemc.eclipsecore.objects.Tab;
+import gg.eclipsemc.eclipsecore.tab.LegacyTab;
+import gg.eclipsemc.eclipsecore.tab.RGBTab;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-public final class EclipseChat extends JavaPlugin {
+public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<CommandSender> paperCommandManager;
     private Tab rgbTab;
@@ -48,9 +48,9 @@ public final class EclipseChat extends JavaPlugin {
         paperCommandManager.registerAsynchronousCompletions();
         paperCommandManager.registerBrigadier();
         paperCommandManager.command(
-                paperCommandManager.commandBuilder("eclipsechat")
+                paperCommandManager.commandBuilder("eclipsecore")
                         .literal("reload")
-                        .permission("eclipsechat.reload")
+                        .permission("eclipsecore.reload")
                         .handler(c -> {
                             c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseChat..."));
                             reloadConfig();
@@ -64,9 +64,9 @@ public final class EclipseChat extends JavaPlugin {
                         })
         );
         paperCommandManager.command(
-                paperCommandManager.commandBuilder("eclipsechat")
+                paperCommandManager.commandBuilder("eclipsecore")
                         .literal("about")
-                        .permission("eclipsechat.about")
+                        .permission("eclipsecore.about")
                         .handler(c -> c.getSender().sendMessage(MiniMessage.get().parse("<blue>EclipseChat v" + getDescription().getVersion() + "\n<green>By <rainbow>SimplyMerlin")))
         );
     }
