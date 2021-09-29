@@ -2,33 +2,29 @@ package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
-import com.viaversion.viaversion.api.Via;
-import gg.eclipsemc.eclipsecore.chat.ChatListener;
-import gg.eclipsemc.eclipsecore.chat.EclipseChatRenderer;
-import gg.eclipsemc.eclipsecore.listener.PlayerListListener;
-import gg.eclipsemc.eclipsecore.objects.Tab;
-import gg.eclipsemc.eclipsecore.tab.LegacyTab;
-import gg.eclipsemc.eclipsecore.tab.RGBTab;
+import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
+import gg.eclipsemc.eclipsecore.module.tab.TabModule;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 
 public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<CommandSender> paperCommandManager;
-    private Tab rgbTab;
-    private Tab legacyTab;
+    protected final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        setupPlayerList();
-        setupChat();
+        modules.add(new TabModule(this));
+        modules.add(new ChatModule(this));
+        enableModules();
         try {
             registerCommands();
         } catch (Exception e) {
@@ -40,6 +36,29 @@ public final class EclipseCore extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public void reloadModules() {
+        for (final EclipseModule module : modules) {
+            if (module.isEnabled()) {
+                module.reload();
+            }
+        }
+    }
+
+    public void enableModules() {
+        for (final EclipseModule module : modules) {
+            if (!module.isEnabled()) {
+                module.enable();
+            }
+        }
+    }
+
+    public void disableModules() {
+        for (final EclipseModule module : modules) {
+            if (module.isEnabled())
+                module.disable();
+        }
     }
 
     private void registerCommands() throws Exception {
@@ -54,12 +73,7 @@ public final class EclipseCore extends JavaPlugin {
                         .handler(c -> {
                             c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseChat..."));
                             reloadConfig();
-                            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-                                getRgbTab().reloadPlayerList();
-                                getLegacyTab().reloadPlayerList();
-                                refreshPlayerList();
-                            });
-                            Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadChat);
+                            Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadModules);
                             c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseChat!"));
                         })
         );
@@ -70,47 +84,5 @@ public final class EclipseCore extends JavaPlugin {
                         .handler(c -> c.getSender().sendMessage(MiniMessage.get().parse("<blue>EclipseChat v" + getDescription().getVersion() + "\n<green>By <rainbow>SimplyMerlin")))
         );
     }
-
-    public void setupPlayerList() {
-        if (getConfig().getBoolean("tab.enabled")) {
-            legacyTab = new LegacyTab(this);
-            rgbTab = new RGBTab(this);
-            getServer().getPluginManager().registerEvents(new PlayerListListener(this), this);
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
-        }
-    }
-
-    public void setupChat() {
-        if (getConfig().getBoolean("chat.enabled")) {
-            reloadChat();
-            Bukkit.getServer().getPluginManager().registerEvents(new ChatListener(), this);
-        }
-    }
-
-    public void reloadChat() {
-        EclipseChatRenderer.nameFormat = getConfig().getString("chat.nameformat");
-        EclipseChatRenderer.nameHover = getConfig().getString("chat.namehover");
-    }
-
-    public void refreshPlayerList(Player player) {
-        if(Via.getAPI().getPlayerVersion(player.getUniqueId()) >= 735 /* 1.16 */) {
-            rgbTab.refreshTabList(player);
-        }else {
-            legacyTab.refreshTabList(player);
-        }
-    }
-
-    public void refreshPlayerList() {
-        Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList);
-    }
-
-    public Tab getLegacyTab() {
-        return legacyTab;
-    }
-
-    public Tab getRgbTab() {
-        return rgbTab;
-    }
-
 
 }

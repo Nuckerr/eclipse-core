@@ -1,7 +1,7 @@
-package gg.eclipsemc.eclipsecore.tab;
+package gg.eclipsemc.eclipsecore.module.tab.object.impl;
 
 import gg.eclipsemc.eclipsecore.EclipseCore;
-import gg.eclipsemc.eclipsecore.objects.Tab;
+import gg.eclipsemc.eclipsecore.module.tab.object.Tab;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -14,15 +14,15 @@ import java.util.logging.Logger;
 /**
  * @author Nucker
  */
-public class RGBTab implements Tab {
+public class LegacyTab implements Tab {
 
     private String playerListHeader;
     private String playerListFooter;
     private String tabName;
 
-    private EclipseCore eclipseCore;
+    private final EclipseCore eclipseCore;
 
-    public RGBTab(EclipseCore eclipseCore) {
+    public LegacyTab(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
         reloadPlayerList();
     }
@@ -44,8 +44,8 @@ public class RGBTab implements Tab {
 
     @Override
     public void reloadPlayerList() {
-        String configHeader = getConfig().getString("tab.header");
-        String configFooter = getConfig().getString("tab.footer");
+        String configHeader = getConfig().getString("tab.legacy.header");
+        String configFooter = getConfig().getString("tab.legacy.footer");
         getLogger().log(Level.INFO, "Got tab header " + configHeader);
         getLogger().log(Level.INFO, "Got tab footer " + configFooter);
         if (configHeader == null || configFooter == null) {
@@ -55,7 +55,7 @@ public class RGBTab implements Tab {
         }
         playerListHeader = configHeader;
         playerListFooter = configFooter;
-        tabName = getConfig().getString("tab.playername");
+        tabName = getConfig().getString("tab.legacy.playername");
     }
 
     @Override
@@ -71,4 +71,5 @@ public class RGBTab implements Tab {
     private Logger getLogger() {
         return eclipseCore.getLogger();
     }
+
 }
