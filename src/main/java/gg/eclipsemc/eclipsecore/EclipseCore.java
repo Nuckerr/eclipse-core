@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<CommandSender> paperCommandManager;
-    protected final Set<EclipseModule> modules = new HashSet<>();
+    public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -71,18 +71,22 @@ public final class EclipseCore extends JavaPlugin {
                         .literal("reload")
                         .permission("eclipsecore.reload")
                         .handler(c -> {
-                            c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseChat..."));
+                            c.getSender().sendMessage(MiniMessage.get().parse("<red>Reloading EclipseCore..."));
                             reloadConfig();
                             Bukkit.getScheduler().runTaskAsynchronously(this, this::reloadModules);
-                            c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseChat!"));
+                            c.getSender().sendMessage(MiniMessage.get().parse("<green>Reloaded EclipseCore!"));
                         })
         );
         paperCommandManager.command(
                 paperCommandManager.commandBuilder("eclipsecore")
                         .literal("about")
                         .permission("eclipsecore.about")
-                        .handler(c -> c.getSender().sendMessage(MiniMessage.get().parse("<blue>EclipseChat v" + getDescription().getVersion() + "\n<green>By <rainbow>SimplyMerlin")))
+                        .handler(c -> c.getSender().sendMessage(MiniMessage.get().parse("<blue>EclipseCore v" + getDescription().getVersion() + "\n<green>By <rainbow>SimplyMerlin")))
         );
+    }
+
+    public Set<EclipseModule> getModules() {
+        return modules;
     }
 
 }
