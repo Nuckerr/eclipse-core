@@ -12,12 +12,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class TabModule extends EclipseModule {
 
+    private Tab rgbTab;
+    private Tab legacyTab;
+
     public TabModule(final EclipseCore eclipseCore) {
         super(eclipseCore);
     }
 
-    private Tab rgbTab;
-    private Tab legacyTab;
+    @Override
+    public String getName() {
+        return "TabModule";
+    }
 
     @Override
     public void enable() {

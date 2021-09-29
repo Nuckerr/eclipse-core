@@ -11,6 +11,11 @@ public class ChatModule extends EclipseModule {
     }
 
     @Override
+    public String getName() {
+        return "ChatModule";
+    }
+
+    @Override
     public void enable() {
         registerListener(new ChatListener());
         reload();

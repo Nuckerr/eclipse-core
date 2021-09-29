@@ -18,6 +18,10 @@ public class EclipseModule implements Listener {
         this.eclipseCore = eclipseCore;
     }
 
+    public String getName() {
+        return "NotOverwrittenNagSomeone";
+    }
+
     public void enable() {
         registerListener(this);
         isEnabled = true;
