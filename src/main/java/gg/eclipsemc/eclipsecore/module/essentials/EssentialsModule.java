@@ -3,6 +3,7 @@ package gg.eclipsemc.eclipsecore.module.essentials;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.module.essentials.command.FlyCommand;
+import gg.eclipsemc.eclipsecore.module.essentials.command.PluginsCommand;
 
 /**
  * @author Nucker
@@ -27,6 +28,7 @@ public class EssentialsModule extends EclipseModule {
     @Override
     protected void onEnable() {
         registerCommand(new FlyCommand());
+        registerCommand(new PluginsCommand());
         super.onEnable();
     }
 
