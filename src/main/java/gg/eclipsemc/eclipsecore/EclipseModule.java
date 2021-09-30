@@ -1,11 +1,17 @@
 package gg.eclipsemc.eclipsecore;
 
+import de.leonhard.storage.Yaml;
+import de.leonhard.storage.internal.settings.ConfigSettings;
+import de.leonhard.storage.internal.settings.ReloadSettings;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class EclipseModule implements Listener {
 
@@ -13,6 +19,7 @@ public class EclipseModule implements Listener {
     protected final Set<Listener> listeners = new HashSet<>();
     protected final Set<BukkitTask> tasks = new HashSet<>();
     private boolean isEnabled;
+    private Yaml config;
 
     public EclipseModule(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
@@ -20,6 +27,36 @@ public class EclipseModule implements Listener {
 
     public String getName() {
         return "NotOverwrittenNagSomeone";
+    }
+
+    /**
+     * Override to change the name of the config
+     */
+    public String getConfigName() {
+        return this.getName().toLowerCase() + ".yml";
+    }
+
+    protected void preLoad() {
+        File configFile = null;
+        try {
+            File dir = eclipseCore.getDataFolder();
+            if(!dir.exists()) {
+                dir.mkdir();
+            }
+            configFile = new File(dir, this.getConfigName());
+            if(!configFile.exists()) {
+                if(eclipseCore.getResource(this.getConfigName()) == null) {
+                    configFile.createNewFile();
+                }else {
+                    eclipseCore.saveResource(this.getConfigName(), false);
+                }
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.config = new Yaml(configFile);
+        this.config.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
+        this.config.setReloadSettings(ReloadSettings.MANUALLY); // Use Yaml#forceReload() (its safe, I swear)
     }
 
     public void enable() {
@@ -36,7 +73,7 @@ public class EclipseModule implements Listener {
     }
 
     public void reload() {
-
+        this.getConfig().forceReload(); // I swear this is safe
     }
 
     public boolean isEnabled() {
@@ -70,6 +107,10 @@ public class EclipseModule implements Listener {
     protected void scheduleRepeatingAsync(Runnable runnable, long delay, long interval) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimerAsynchronously(eclipseCore, runnable, delay, interval);
         tasks.add(task);
+    }
+
+    public Yaml getConfig() {
+        return config;
     }
 
 }

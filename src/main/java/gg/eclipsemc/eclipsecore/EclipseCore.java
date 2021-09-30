@@ -60,6 +60,7 @@ public final class EclipseCore extends JavaPlugin {
     public void enableModules() {
         for (final EclipseModule module : modules) {
             if (!module.isEnabled()) {
+                module.preLoad();
                 module.enable();
             }
         }

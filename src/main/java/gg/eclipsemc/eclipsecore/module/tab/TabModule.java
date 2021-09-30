@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.logging.Logger;
+
 public class TabModule extends EclipseModule {
 
     private Tab rgbTab;
@@ -25,9 +27,14 @@ public class TabModule extends EclipseModule {
     }
 
     @Override
+    public String getConfigName() {
+        return "tab.yml";
+    }
+
+    @Override
     public void enable() {
-        rgbTab = new RGBTab(eclipseCore);
-        legacyTab = new RGBTab(eclipseCore);
+        rgbTab = new RGBTab(this);
+        legacyTab = new RGBTab(this);
         scheduleRepeatingAsync(() -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
         super.enable();
     }
@@ -54,6 +61,10 @@ public class TabModule extends EclipseModule {
         } else {
             legacyTab.refreshTabList(player);
         }
+    }
+
+    public Logger getLogger() {
+        return this.eclipseCore.getLogger();
     }
 
 }

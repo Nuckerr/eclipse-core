@@ -16,6 +16,11 @@ public class ChatModule extends EclipseModule {
     }
 
     @Override
+    public String getConfigName() {
+        return "chat.yml";
+    }
+
+    @Override
     public void enable() {
         registerListener(new ChatListener());
         reload();
@@ -24,8 +29,8 @@ public class ChatModule extends EclipseModule {
 
     @Override
     public void reload() {
-        ChatRenderer.nameFormat = eclipseCore.getConfig().getString("chat.nameformat");
-        ChatRenderer.nameHover = eclipseCore.getConfig().getString("chat.namehover");
+        ChatRenderer.nameFormat = this.getConfig().getString("nameformat");
+        ChatRenderer.nameHover = this.getConfig().getString("namehover");
         super.reload();
     }
 

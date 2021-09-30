@@ -44,6 +44,14 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>de.leonhard.storage</pattern>
+                            <shadedPattern>gg.eclipsemc.eclipsecore.storage</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -79,6 +87,10 @@
             <id>minecraft-libraries</id>
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -123,6 +135,11 @@
             <artifactId>viaversion-api</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.simplix-softworks</groupId>
+            <artifactId>simplixstorage</artifactId>
+            <version>3.2.3</version>
         </dependency>
     </dependencies>
 </project>
