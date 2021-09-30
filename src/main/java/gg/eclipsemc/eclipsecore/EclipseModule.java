@@ -1,9 +1,12 @@
 package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.Command;
+import com.mongodb.client.MongoCollection;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -23,6 +26,7 @@ public class EclipseModule implements Listener {
     private boolean isEnabled;
     private boolean enableOnStartup;
     private Yaml config;
+    private MongoCollection<Document> collection;
 
     public EclipseModule(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
@@ -62,6 +66,10 @@ public class EclipseModule implements Listener {
         this.config.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
         this.config.setReloadSettings(ReloadSettings.MANUALLY); // Use Yaml#forceReload() (its safe, I swear)
         enableOnStartup = this.config.getBoolean("enableonstartup");
+    }
+
+    protected void setupMongo() {
+        collection = eclipseCore.getMongoClient().getDatabase("EclipseCore").getCollection(this.getName());
     }
 
     public void enable() {
@@ -156,4 +164,38 @@ public class EclipseModule implements Listener {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
+    public MongoCollection<Document> getCollection() {
+        return collection;
+    }
+
+    /**
+     * Will append a document (or create if it is missing) in the module's collection
+     */
+    protected void saveDocument(Bson filter, Document document) {
+        Document res = collection.find(filter).first();
+        if(res == null) {
+            collection.insertOne(document);
+        }else {
+            collection.findOneAndUpdate(filter, document);
+        }
+    }
+
+
+    /**
+     * Will append a document (or create if it is missing) in the module's collection
+     */
+    protected void saveDocument(Bson filter, String key, String newValue) {
+        Document document = new Document(key, newValue);
+
+        Document res = collection.find(filter).first();
+        if(res == null) {
+            collection.insertOne(document);
+        }else {
+            collection.findOneAndUpdate(filter, document);
+        }
+    }
+
+    protected void deleteDocument(Bson filter) {
+        collection.findOneAndDelete(filter);
+    }
 }
