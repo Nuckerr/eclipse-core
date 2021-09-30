@@ -1,7 +1,6 @@
 package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.meta.CommandMeta;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
@@ -13,7 +12,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
