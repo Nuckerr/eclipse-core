@@ -1,4 +1,4 @@
-package gg.eclipsemc.eclipsecore;
+package gg.eclipsemc.eclipsecore.manager;
 
 import com.mattmalec.pterodactyl4j.PteroBuilder;
 import com.mattmalec.pterodactyl4j.application.entities.Allocation;
@@ -6,6 +6,7 @@ import com.mattmalec.pterodactyl4j.application.entities.ApplicationServer;
 import com.mattmalec.pterodactyl4j.application.entities.PteroApplication;
 import com.mattmalec.pterodactyl4j.client.entities.ClientServer;
 import com.mattmalec.pterodactyl4j.client.entities.PteroClient;
+import gg.eclipsemc.eclipsecore.EclipseCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
