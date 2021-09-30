@@ -164,6 +164,14 @@ public final class EclipseCore extends JavaPlugin {
                         .permission("eclipsecore.module.disable")
                         .handler(c -> ((EclipseModule) c.get("module")).disable())
         );
+        paperCommandManager.command(
+                paperCommandManager.commandBuilder("eclipsecore")
+                        .literal("module")
+                        .literal("reload")
+                        .argument(new EclipseModuleArgument<>(true, "module", this))
+                        .permission("eclipsecore.module.reload")
+                        .handler(c -> ((EclipseModule) c.get("module")).reload())
+        );
     }
 
     public Set<EclipseModule> getModules() {
