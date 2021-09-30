@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +108,10 @@ public class EclipseModule implements Listener {
     protected void registerListener(Listener listener) {
         listeners.add(listener);
         eclipseCore.getServer().getPluginManager().registerEvents(listener, eclipseCore);
+    }
+
+    protected <T> void registerCommand(final @NonNull T instance) {
+        eclipseCore.getAnnotationParser().parse(instance);
     }
 
     protected void runAsync(Runnable runnable) {

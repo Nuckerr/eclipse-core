@@ -2,6 +2,7 @@ package gg.eclipsemc.eclipsecore.module.essentials;
 
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
+import gg.eclipsemc.eclipsecore.module.essentials.command.FlyCommand;
 
 import java.util.List;
 
@@ -27,8 +28,7 @@ public class EssentialsModule extends EclipseModule {
 
     @Override
     protected void onEnable() {
-
-
+        registerCommand(new FlyCommand());
         super.onEnable();
     }
 

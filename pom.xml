@@ -44,14 +44,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>de.leonhard.storage</pattern>
-                            <shadedPattern>gg.eclipsemc.eclipsecore.storage</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -124,6 +116,11 @@
             <version>1.5.0</version>
         </dependency>
         <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-annotations</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.10.10</version>
@@ -138,10 +135,9 @@
         </dependency>
         <dependency>
             <groupId>com.github.simplix-softworks</groupId>
-            <artifactId>simplixstorage</artifactId>
+            <artifactId>SimplixStorage</artifactId>
             <version>3.2.3</version>
-            <systemPath>${project.basedir}/libs/simplixstorage-3.2.3.jar</systemPath>
-            <scope>system</scope>
+            <scope>compile</scope>
         </dependency>
         <!-- Used for getting all module classes -->
         <dependency>

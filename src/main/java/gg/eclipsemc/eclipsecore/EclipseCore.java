@@ -1,11 +1,17 @@
 package gg.eclipsemc.eclipsecore;
 
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.arguments.parser.ParserParameters;
+import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.captions.Caption;
 import cloud.commandframework.captions.CaptionRegistry;
 import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
+import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
 import gg.eclipsemc.eclipsecore.parser.EclipseModuleParser;
 import gg.eclipsemc.eclipsecore.parser.argument.EclipseModuleArgument;
@@ -31,28 +37,22 @@ import java.util.logging.Level;
 public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<CommandSender> paperCommandManager;
+    AnnotationParser<CommandSender> annotationParser;
     public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        /*
         modules.add(new TabModule(this));
         modules.add(new ChatModule(this));
-         */
-        try {
-            this.loadModules();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        enableStartupModules();
+        modules.add(new EssentialsModule(this));
         try {
             registerCommands();
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Failed registering commands!", e);
             getServer().getPluginManager().disablePlugin(this);
         }
+        enableStartupModules();
     }
 
     @Override
@@ -85,34 +85,24 @@ public final class EclipseCore extends JavaPlugin {
         }
     }
 
-    private void loadModules() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
-            IllegalAccessException {
-        Reflections reflections = new Reflections("gg.eclipsemc.eclipsecore.module");
-        Set<Class<? extends EclipseModule>> moduleClasses = reflections.getSubTypesOf(EclipseModule.class);
-        for (final Class<? extends EclipseModule> moduleClass : moduleClasses) {
-            EclipseModule module = null;
-            if(moduleClass.getConstructor() != null) {
-                module = moduleClass.getConstructor().newInstance();
-            }else if(moduleClass.getConstructor(EclipseCore.class) != null) {
-                module = moduleClass.getConstructor(EclipseCore.class).newInstance(this);
-            }else {
-                this.getLogger().log(Level.WARNING, "Unable to load " + moduleClass.getName() + " due to unhandled constructor " +
-                        "params.");
-            }
-            if(module != null) {
-                this.modules.add(module);
-            }
-        }
-    }
-
     private void registerCommands() throws Exception {
         paperCommandManager = new PaperCommandManager<>(
                 this, CommandExecutionCoordinator.simpleCoordinator(), Function.identity(), Function.identity());
+        paperCommandManager.setSetting(CommandManager.ManagerSettings.ALLOW_UNSAFE_REGISTRATION, true);
         paperCommandManager.registerAsynchronousCompletions();
         paperCommandManager.registerBrigadier();
         paperCommandManager.getParserRegistry().registerParserSupplier(
                 TypeToken.get(EclipseModule.class),
                 options -> new EclipseModuleParser<>(this)
+        );
+        final Function<ParserParameters, CommandMeta> commandMetaFunction = p ->
+                CommandMeta.simple()
+                        .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
+                        .build();
+        annotationParser = new AnnotationParser<CommandSender>(
+                paperCommandManager,
+                CommandSender.class,
+                commandMetaFunction
         );
         final CaptionRegistry<CommandSender> registry = paperCommandManager.getCaptionRegistry();
         if (registry instanceof final FactoryDelegatingCaptionRegistry<CommandSender> factoryRegistry) {
@@ -207,6 +197,10 @@ public final class EclipseCore extends JavaPlugin {
 
     public Set<EclipseModule> getModules() {
         return modules;
+    }
+
+    public AnnotationParser<CommandSender> getAnnotationParser() {
+        return annotationParser;
     }
 
 }
