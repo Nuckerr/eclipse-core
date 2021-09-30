@@ -1,13 +1,11 @@
 package gg.eclipsemc.eclipsecore.module.tab.object.impl;
 
 import de.leonhard.storage.Yaml;
-import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
 import gg.eclipsemc.eclipsecore.module.tab.object.Tab;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.logging.Level;

@@ -4,8 +4,6 @@ import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.module.essentials.command.FlyCommand;
 
-import java.util.List;
-
 /**
  * @author Nucker
  */
