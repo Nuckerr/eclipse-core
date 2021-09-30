@@ -10,6 +10,8 @@ import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
@@ -35,6 +37,8 @@ public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<CommandSender> paperCommandManager;
     AnnotationParser<CommandSender> annotationParser;
+    PterodactylManager pterodactylManager;
+    MongoClient mongoClient;
     public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
@@ -50,11 +54,27 @@ public final class EclipseCore extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
         enableStartupModules();
+        pterodactylManager = new PterodactylManager(this);
+        String host = "database.mongo.host", username = "database.mongo.authentication.username", password = "database.mongo" +
+                ".authentication.password", port = "database.mongo.port", auth = "database.mongo.authentication.enabled";
+        String uri;
+        if (getConfig().getBoolean(auth)) {
+            uri = "mongodb://[username]:[password]@[host]:[port]"
+                    .replace("[username]", getConfig().getString(username))
+                    .replace("[password]", getConfig().getString(password))
+                    .replace("[host]", getConfig().getString(host))
+                    .replace("[port]", String.valueOf(getConfig().getInt(port)));
+        }else {
+            uri = "mongodb://[host]:[port]".replace("[host]", getConfig().getString(host))
+                    .replace("[port]", String.valueOf(getConfig().getInt(port)));
+        }
+        mongoClient = new MongoClient(new MongoClientURI(uri));
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        this.disableModules();
     }
 
     public void reloadModules() {
@@ -78,7 +98,8 @@ public final class EclipseCore extends JavaPlugin {
 
     public void disableModules() {
         for (final EclipseModule module : modules) {
-            module.disable();
+            if(module.isEnabled())
+                module.disable();
         }
     }
 
@@ -198,6 +219,14 @@ public final class EclipseCore extends JavaPlugin {
 
     public AnnotationParser<CommandSender> getAnnotationParser() {
         return annotationParser;
+    }
+
+    public PterodactylManager getPterodactylManager() {
+        return pterodactylManager;
+    }
+
+    public MongoClient getMongoClient() {
+        return mongoClient;
     }
 
 }
