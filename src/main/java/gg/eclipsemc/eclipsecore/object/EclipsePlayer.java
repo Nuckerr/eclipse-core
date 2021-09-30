@@ -13,27 +13,32 @@ import java.util.logging.Level;
 /**
  * @author Nucker
  */
-public class GamePlayer {
+//Fuck yo watermark you stole half this class from me
+public class EclipsePlayer {
 
-    private static final Map<UUID, GamePlayer> cache = new HashMap<>();
-
-    public static GamePlayer getPlayerFromBukkit(Player player) {
-        return new GamePlayer(player);
+    private static final Map<UUID, EclipsePlayer> cache = new HashMap<>();
+    public static Map<UUID, EclipsePlayer> getCache() {
+        return cache;
     }
 
-    public static GamePlayer getPlayerByUUID(UUID uuid) {
-        if(Bukkit.getPlayer(uuid) == null) {
+    public static EclipsePlayer getPlayerFromBukkit(Player player) {
+        return new EclipsePlayer(player);
+    }
+
+    public static EclipsePlayer getPlayerByUUID(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
+        if(player == null) {
             Bukkit.getLogger().log(Level.SEVERE, "Failed to load player class for `" + uuid + "` because they are not online");
             return null;
         }
-        return new GamePlayer(Bukkit.getPlayer(uuid));
+        return new EclipsePlayer(player);
     }
 
 
     private final Player player;
     private final PlayerData data;
 
-    public GamePlayer(Player player) {
+    public EclipsePlayer(Player player) {
         this.player = player;
         this.data = new PlayerData(player.getUniqueId());
     }
@@ -53,10 +58,6 @@ public class GamePlayer {
 
     public PlayerData getPlayerData() {
         return data;
-    }
-
-    public static Map<UUID, GamePlayer> getCache() {
-        return cache;
     }
 
 }
