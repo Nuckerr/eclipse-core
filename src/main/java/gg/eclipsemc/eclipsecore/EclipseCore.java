@@ -12,6 +12,8 @@ import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
+import gg.eclipsemc.eclipsecore.manager.PterodactylManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
@@ -38,6 +40,7 @@ public final class EclipseCore extends JavaPlugin {
     PaperCommandManager<CommandSender> paperCommandManager;
     AnnotationParser<CommandSender> annotationParser;
     PterodactylManager pterodactylManager;
+    PlayerDataManager playerDataManager;
     MongoClient mongoClient;
     public final Set<EclipseModule> modules = new HashSet<>();
 
@@ -69,6 +72,8 @@ public final class EclipseCore extends JavaPlugin {
                     .replace("[port]", String.valueOf(getConfig().getInt(port)));
         }
         mongoClient = new MongoClient(new MongoClientURI(uri));
+
+        playerDataManager = new PlayerDataManager(this);
     }
 
     @Override
@@ -83,6 +88,11 @@ public final class EclipseCore extends JavaPlugin {
         }
     }
 
+    /**
+     * @deprecated Will enable all modules. Even ones set not to start up on start. Use
+     * {@link EclipseCore#enableStartupModules()}
+     *
+     */
     public void enableModules() {
         for (final EclipseModule module : modules) {
             module.enable();
@@ -98,8 +108,7 @@ public final class EclipseCore extends JavaPlugin {
 
     public void disableModules() {
         for (final EclipseModule module : modules) {
-            if(module.isEnabled())
-                module.disable();
+            module.disable();
         }
     }
 
@@ -227,6 +236,10 @@ public final class EclipseCore extends JavaPlugin {
 
     public MongoClient getMongoClient() {
         return mongoClient;
+    }
+
+    public PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
     }
 
 }
