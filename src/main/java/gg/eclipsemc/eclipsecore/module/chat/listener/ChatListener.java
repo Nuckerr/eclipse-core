@@ -1,5 +1,6 @@
-package gg.eclipsemc.eclipsecore.chat;
+package gg.eclipsemc.eclipsecore.module.chat.listener;
 
+import gg.eclipsemc.eclipsecore.module.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +29,7 @@ public class ChatListener implements Listener {
             }
         }
          */
-        e.renderer(new EclipseChatRenderer());
+        e.renderer(new ChatRenderer());
     }
 
 }

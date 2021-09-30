@@ -1,11 +1,11 @@
-package gg.eclipsemc.eclipsecore.tab;
+package gg.eclipsemc.eclipsecore.module.tab.object.impl;
 
-import gg.eclipsemc.eclipsecore.EclipseCore;
-import gg.eclipsemc.eclipsecore.objects.Tab;
+import de.leonhard.storage.Yaml;
+import gg.eclipsemc.eclipsecore.module.tab.TabModule;
+import gg.eclipsemc.eclipsecore.module.tab.object.Tab;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
@@ -20,10 +20,10 @@ public class LegacyTab implements Tab {
     private String playerListFooter;
     private String tabName;
 
-    private EclipseCore eclipseCore;
+    private final TabModule module;
 
-    public LegacyTab(EclipseCore eclipseCore) {
-        this.eclipseCore = eclipseCore;
+    public LegacyTab(TabModule module) {
+        this.module = module;
         reloadPlayerList();
     }
 
@@ -44,8 +44,8 @@ public class LegacyTab implements Tab {
 
     @Override
     public void reloadPlayerList() {
-        String configHeader = getConfig().getString("tab.legacy.header");
-        String configFooter = getConfig().getString("tab.legacy.footer");
+        String configHeader = getConfig().getString("legacy.header");
+        String configFooter = getConfig().getString("legacy.footer");
         getLogger().log(Level.INFO, "Got tab header " + configHeader);
         getLogger().log(Level.INFO, "Got tab footer " + configFooter);
         if (configHeader == null || configFooter == null) {
@@ -55,7 +55,7 @@ public class LegacyTab implements Tab {
         }
         playerListHeader = configHeader;
         playerListFooter = configFooter;
-        tabName = getConfig().getString("tab.legacy.playername");
+        tabName = getConfig().getString("legacy.playername");
     }
 
     @Override
@@ -64,11 +64,12 @@ public class LegacyTab implements Tab {
         player.playerListName(Component.text(PlaceholderAPI.setPlaceholders(player, getName())));
     }
 
-    private FileConfiguration getConfig() {
-        return eclipseCore.getConfig();
+    private Yaml getConfig() {
+        return module.getConfig();
     }
 
     private Logger getLogger() {
-        return eclipseCore.getLogger();
+        return module.getLogger();
     }
+
 }

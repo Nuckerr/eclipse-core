@@ -2,7 +2,7 @@ name: EclipseCore
 version: ${project.version}
 main: gg.eclipsemc.eclipsecore.EclipseCore
 api-version: 1.17
-authors: [ SimplyMerlin ]
+authors: [ SimplyMerlin, Nucker ]
 description: Core.
 website: https://eclipsemc.gg/
 depend: [PlaceholderAPI]

@@ -1,4 +1,4 @@
-package gg.eclipsemc.eclipsecore.objects;
+package gg.eclipsemc.eclipsecore.module.tab.object;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -17,4 +17,5 @@ public interface Tab {
     void reloadPlayerList();
 
     void refreshTabList(Player player);
+
 }

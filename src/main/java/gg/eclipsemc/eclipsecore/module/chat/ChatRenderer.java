@@ -1,23 +1,16 @@
-package gg.eclipsemc.eclipsecore.chat;
+package gg.eclipsemc.eclipsecore.module.chat;
 
-import io.papermc.paper.chat.ChatRenderer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Pattern;
-
-public class EclipseChatRenderer implements ChatRenderer {
+public class ChatRenderer implements io.papermc.paper.chat.ChatRenderer {
 
     public static String nameFormat;
     public static String nameHover;
