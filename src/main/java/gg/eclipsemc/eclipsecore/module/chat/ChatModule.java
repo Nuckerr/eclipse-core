@@ -21,17 +21,17 @@ public class ChatModule extends EclipseModule {
     }
 
     @Override
-    public void enable() {
+    public void onEnable() {
         registerListener(new ChatListener());
-        reload();
-        super.enable();
+        onReload();
+        super.onEnable();
     }
 
     @Override
-    public void reload() {
+    public void onReload() {
         ChatRenderer.nameFormat = this.getConfig().getString("nameformat");
         ChatRenderer.nameHover = this.getConfig().getString("namehover");
-        super.reload();
+        super.onReload();
     }
 
 }

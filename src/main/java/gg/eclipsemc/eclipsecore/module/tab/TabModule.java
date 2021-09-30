@@ -32,18 +32,18 @@ public class TabModule extends EclipseModule {
     }
 
     @Override
-    public void enable() {
+    public void onEnable() {
         rgbTab = new RGBTab(this);
         legacyTab = new RGBTab(this);
         scheduleRepeatingAsync(() -> Bukkit.getOnlinePlayers().forEach(this::refreshPlayerList), 0L, 200L);
-        super.enable();
+        super.onEnable();
     }
 
     @Override
-    public void reload() {
+    public void onReload() {
         rgbTab.reloadPlayerList();
         legacyTab.reloadPlayerList();
-        super.reload();
+        super.onReload();
     }
 
     @EventHandler
