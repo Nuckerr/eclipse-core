@@ -44,9 +44,9 @@ public class PlayerDataManager {
     public Document getOrCreate(UUID uuid) {
         if(cache.containsKey(uuid))
             return cache.get(uuid);
-        Bson filter = new Document("uuid", uuid);
+        Bson filter = new Document("_id", uuid);
         if(collection.find(filter).first() == null) {
-            Document res = new Document("uuid", uuid);
+            Document res = new Document("_id", uuid);
             for (final DefaultData<?> def: defaults) {
                 res.put(def.getKey(), def.parseData(uuid));
             }
@@ -59,7 +59,7 @@ public class PlayerDataManager {
     }
 
     public void updateDoc(UUID uuid, Document document) {
-        collection.findOneAndReplace(new Document("uuid", uuid), document);
+        collection.findOneAndReplace(new Document("_id", uuid), document);
     }
 
     public void addDefault(DefaultData<?> data) {
