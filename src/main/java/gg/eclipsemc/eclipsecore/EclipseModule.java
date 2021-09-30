@@ -1,14 +1,18 @@
 package gg.eclipsemc.eclipsecore;
 
+import cloud.commandframework.Command;
+import cloud.commandframework.meta.CommandMeta;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -135,6 +139,18 @@ public class EclipseModule implements Listener {
 
     public boolean shouldEnableOnStartup() {
         return enableOnStartup;
+    }
+
+    protected Command.Builder<CommandSender> getCommandBuilder(String name, String... aliases) {
+        return this.eclipseCore.paperCommandManager.commandBuilder(name, aliases);
+    }
+
+    protected void registerCommand(Command.Builder<CommandSender> command) {
+        this.eclipseCore.paperCommandManager.command(command);
+    }
+
+    protected void registerCommand(Command<CommandSender> command) {
+        this.eclipseCore.paperCommandManager.command(command);
     }
 
 }
