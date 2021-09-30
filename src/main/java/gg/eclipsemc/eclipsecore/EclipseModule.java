@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 public class EclipseModule implements Listener {
 
@@ -19,10 +18,12 @@ public class EclipseModule implements Listener {
     protected final Set<Listener> listeners = new HashSet<>();
     protected final Set<BukkitTask> tasks = new HashSet<>();
     private boolean isEnabled;
+    private boolean enableOnStartup;
     private Yaml config;
 
     public EclipseModule(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
+        setupConfig();
     }
 
     public String getName() {
@@ -36,7 +37,7 @@ public class EclipseModule implements Listener {
         return this.getName().toLowerCase() + ".yml";
     }
 
-    protected void preLoad() {
+    protected void setupConfig() {
         File configFile = null;
         try {
             File dir = eclipseCore.getDataFolder();
@@ -57,14 +58,27 @@ public class EclipseModule implements Listener {
         this.config = new Yaml(configFile);
         this.config.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
         this.config.setReloadSettings(ReloadSettings.MANUALLY); // Use Yaml#forceReload() (its safe, I swear)
+        enableOnStartup = this.config.getBoolean("enableonstartup");
     }
 
     public void enable() {
+        if (isEnabled)
+            return;
+        onEnable();
+    }
+
+    protected void onEnable() {
         registerListener(this);
         isEnabled = true;
     }
 
     public void disable() {
+        if (!isEnabled)
+            return;
+        onDisable();
+    }
+
+    protected void onDisable() {
         listeners.forEach(HandlerList::unregisterAll);
         tasks.forEach(BukkitTask::cancel);
         listeners.clear();
@@ -73,6 +87,12 @@ public class EclipseModule implements Listener {
     }
 
     public void reload() {
+        if (!isEnabled)
+            return;
+        onReload();
+    }
+
+    protected void onReload() {
         this.getConfig().forceReload(); // I swear this is safe
     }
 
@@ -111,6 +131,10 @@ public class EclipseModule implements Listener {
 
     public Yaml getConfig() {
         return config;
+    }
+
+    public boolean shouldEnableOnStartup() {
+        return enableOnStartup;
     }
 
 }

@@ -35,7 +35,7 @@ public final class EclipseCore extends JavaPlugin {
         saveDefaultConfig();
         modules.add(new TabModule(this));
         modules.add(new ChatModule(this));
-        enableModules();
+        enableStartupModules();
         try {
             registerCommands();
         } catch (Exception e) {
@@ -51,26 +51,26 @@ public final class EclipseCore extends JavaPlugin {
 
     public void reloadModules() {
         for (final EclipseModule module : modules) {
-            if (module.isEnabled()) {
-                module.reload();
-            }
+            module.reload();
         }
     }
 
     public void enableModules() {
         for (final EclipseModule module : modules) {
-            if (!module.isEnabled()) {
-                module.preLoad();
+            module.enable();
+        }
+    }
+
+    public void enableStartupModules() {
+        for (final EclipseModule module : modules) {
+            if (module.shouldEnableOnStartup())
                 module.enable();
-            }
         }
     }
 
     public void disableModules() {
         for (final EclipseModule module : modules) {
-            if (module.isEnabled()) {
-                module.disable();
-            }
+            module.disable();
         }
     }
 
@@ -154,7 +154,15 @@ public final class EclipseCore extends JavaPlugin {
                         .literal("enable")
                         .argument(new EclipseModuleArgument<>(true, "module", this))
                         .permission("eclipsecore.module.enable")
-                        .handler(c -> c.getSender().sendMessage(((EclipseModule) c.get("module")).getName()))
+                        .handler(c -> ((EclipseModule) c.get("module")).enable())
+        );
+        paperCommandManager.command(
+                paperCommandManager.commandBuilder("eclipsecore")
+                        .literal("module")
+                        .literal("disable")
+                        .argument(new EclipseModuleArgument<>(true, "module", this))
+                        .permission("eclipsecore.module.disable")
+                        .handler(c -> ((EclipseModule) c.get("module")).disable())
         );
     }
 
