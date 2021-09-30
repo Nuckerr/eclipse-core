@@ -19,8 +19,11 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -33,8 +36,16 @@ public final class EclipseCore extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        /*
         modules.add(new TabModule(this));
         modules.add(new ChatModule(this));
+         */
+        try {
+            this.loadModules();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         enableStartupModules();
         try {
             registerCommands();
@@ -71,6 +82,26 @@ public final class EclipseCore extends JavaPlugin {
     public void disableModules() {
         for (final EclipseModule module : modules) {
             module.disable();
+        }
+    }
+
+    private void loadModules() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+            IllegalAccessException {
+        Reflections reflections = new Reflections("gg.eclipsemc.eclipsecore.module");
+        Set<Class<? extends EclipseModule>> moduleClasses = reflections.getSubTypesOf(EclipseModule.class);
+        for (final Class<? extends EclipseModule> moduleClass : moduleClasses) {
+            EclipseModule module = null;
+            if(moduleClass.getConstructor() != null) {
+                module = moduleClass.getConstructor().newInstance();
+            }else if(moduleClass.getConstructor(EclipseCore.class) != null) {
+                module = moduleClass.getConstructor(EclipseCore.class).newInstance(this);
+            }else {
+                this.getLogger().log(Level.WARNING, "Unable to load " + moduleClass.getName() + " due to unhandled constructor " +
+                        "params.");
+            }
+            if(module != null) {
+                this.modules.add(module);
+            }
         }
     }
 
