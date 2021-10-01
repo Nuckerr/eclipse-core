@@ -5,6 +5,7 @@ import gg.eclipsemc.eclipsecore.EclipseCore;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +36,16 @@ public class PlayerDataManager {
             @Override
             public String parseData(final UUID uuid) {
                 return Bukkit.getOfflinePlayer(uuid).getName();
+            }
+        });
+        this.addDefault(new DefaultData<Long>("firstjoin") {
+            @Override
+            public Long parseData(final UUID uuid) {
+                OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+                if(player.hasPlayedBefore()) {
+                    return player.getFirstPlayed();
+                }
+                return null;
             }
         });
         // TODO: Add more defaults

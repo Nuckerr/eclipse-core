@@ -1,8 +1,10 @@
 package gg.eclipsemc.eclipsecore.object;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -10,14 +12,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-/**
- * @author Nucker
- */
-//Fuck yo watermark you stole half this class from me
-public class EclipsePlayer {
+public class EclipsePlayer extends OfflineEclipsePlayer {
 
     private static final Map<UUID, EclipsePlayer> cache = new HashMap<>();
-    public static Map<UUID, EclipsePlayer> getCache() {
+    public static Map<UUID, EclipsePlayer> getPlayerCache() {
         return cache;
     }
 
@@ -39,12 +37,21 @@ public class EclipsePlayer {
     private final PlayerData data;
 
     public EclipsePlayer(Player player) {
+        super(player);
         this.player = player;
         this.data = new PlayerData(player.getUniqueId());
     }
 
-    public void sendMiniMessage(String message) {
-        player.sendMessage(MiniMessage.get().parse(message));
+    @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    public void sendTranslatedMessage(String message) {
+        message = PlaceholderAPI.setPlaceholders(player, message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        Component comp = MiniMessage.get().parse(message);
+        player.sendMessage(comp);
     }
 
     public void sendMessage(Component component) {
@@ -58,6 +65,10 @@ public class EclipsePlayer {
 
     public PlayerData getPlayerData() {
         return data;
+    }
+
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 
 }

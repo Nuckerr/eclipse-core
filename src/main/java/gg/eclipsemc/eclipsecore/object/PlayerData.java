@@ -3,6 +3,7 @@ package gg.eclipsemc.eclipsecore.object;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -22,6 +23,14 @@ public class PlayerData {
 
         this.id = uuid;
         this.document = manager.getOrCreate(uuid);
+    }
+
+    public boolean isOnline() {
+        return Bukkit.getOfflinePlayer(id).isOnline();
+    }
+
+    public boolean hasPlayedBefore() {
+        return Bukkit.getOfflinePlayer(id).hasPlayedBefore();
     }
 
     public String getString(String key) {
