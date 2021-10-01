@@ -7,6 +7,7 @@ import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -172,12 +173,14 @@ public class EclipseModule implements Listener {
      * Will append a document (or create if it is missing) in the module's collection
      */
     protected void saveDocument(Bson filter, Document document) {
-        Document res = collection.find(filter).first();
-        if(res == null) {
-            collection.insertOne(document);
-        }else {
-            collection.findOneAndUpdate(filter, document);
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
+            Document res = collection.find(filter).first();
+            if(res == null) {
+                collection.insertOne(document);
+            }else {
+                collection.findOneAndUpdate(filter, document);
+            }
+        });
     }
 
 
@@ -185,14 +188,16 @@ public class EclipseModule implements Listener {
      * Will append a document (or create if it is missing) in the module's collection
      */
     protected void saveDocument(Bson filter, String key, String newValue) {
-        Document document = new Document(key, newValue);
+        Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
+            Document document = new Document(key, newValue);
 
-        Document res = collection.find(filter).first();
-        if(res == null) {
-            collection.insertOne(document);
-        }else {
-            collection.findOneAndUpdate(filter, document);
-        }
+            Document res = collection.find(filter).first();
+            if(res == null) {
+                collection.insertOne(document);
+            }else {
+                collection.findOneAndUpdate(filter, document);
+            }
+        });
     }
 
     protected void deleteDocument(Bson filter) {
