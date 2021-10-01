@@ -29,7 +29,7 @@ public class PterodactylManager {
     private final PteroClient client;
     private final PteroApplication application;
     private ApplicationServer apiServer;
-    private ClientServer clientServer;
+    private final ClientServer clientServer;
 
     public PterodactylManager(EclipseCore core) {
         this.core = core;
@@ -37,11 +37,12 @@ public class PterodactylManager {
         this.client = PteroBuilder.createClient(core.getConfig().getString("pterodactyl.url"), core.getConfig().getString(
                 "pterodactyl.token"));
         this.application = PteroBuilder.createApplication(core.getConfig().getString("pterodactyl.url"), core.getConfig().getString(
-                "pterodactyl.token"));
+                "pterodactyl.client"));
         if(client == null || application == null) {
             core.getLogger().log(Level.SEVERE, "Unable to connect to pterodactyl panel. Disabling plugin");
             Bukkit.getPluginManager().disablePlugin(core);
         }
+        System.out.println(application);
 
         int port = Bukkit.getPort();
         for (final ApplicationServer server : application.retrieveServers().execute()) {

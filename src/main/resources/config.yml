@@ -13,8 +13,10 @@ chat:
   namehover: "<gray>Name: <yellow>%aqua_player_color%%aqua_player_nick%\n<gray>Rank: <yellow>%aqua_player_rank%\n<gray>Mine: <yellow>%ultraprison_rank%"
 
 pterodactyl:
-  url: "panel.eclipsemc.gg"
-  token: "key"
+  url: "https://panel.eclipsemc.gg"
+  token: "5HzuLlgGJjKXn0UvizaSfX0E28jhl1EMOkLjIbJu9ZVFyF4x	"
+  client: "TXFVvbk9m8wWcz8VmywdMNDPXE51xMhHST97HCIi09ZgbU9z"
+
 
 database:
   mongo:
