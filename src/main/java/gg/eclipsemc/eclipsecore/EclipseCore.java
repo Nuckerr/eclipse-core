@@ -23,6 +23,7 @@ import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import gg.eclipsemc.eclipsecore.parser.EclipseModuleParser;
 import gg.eclipsemc.eclipsecore.parser.argument.EclipseModuleArgument;
 import io.leangen.geantyref.TypeToken;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -48,6 +49,7 @@ public final class EclipseCore extends JavaPlugin {
     PlayerDataManager playerDataManager;
     MongoClient mongoClient;
     Jedis jedis;
+    PAPIExpansion expansion;
     public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
@@ -82,6 +84,9 @@ public final class EclipseCore extends JavaPlugin {
         jedis = new Jedis(getConfig().getString("database.redis.host"), getConfig().getInt("database.redis.port"));
 
         playerDataManager = new PlayerDataManager(this);
+
+        expansion = new PAPIExpansion(this); // Register placeholder api expansion
+        expansion.register();
     }
 
     @Override
@@ -279,6 +284,9 @@ public final class EclipseCore extends JavaPlugin {
         return playerDataManager;
     }
 
+    public PAPIExpansion getPlaceholderAPIExpansion() {
+        return expansion;
+    }
 
     public Jedis getJedis() {
         return jedis;
