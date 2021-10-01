@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class EclipsePlayer extends OfflineEclipsePlayer {
+public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender {
 
     private static final Map<UUID, EclipsePlayer> cache = new HashMap<>();
     public static Map<UUID, EclipsePlayer> getPlayerCache() {
@@ -56,6 +56,11 @@ public class EclipsePlayer extends OfflineEclipsePlayer {
 
     public void sendMessage(Component component) {
         player.sendMessage(component);
+    }
+
+    @Override
+    public void sendMiniMessage(final String string) {
+        player.sendMessage(MiniMessage.get().parse(string));
     }
 
 

@@ -4,6 +4,7 @@ import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
+import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -24,7 +25,7 @@ public class PluginsCommand {
     @CommandMethod("plugins")
     @CommandDescription("Shows a list of all plugins with fancy components.")
     @CommandPermission("eclipsecore.essentials.plugins")
-    public void onPlugins(CommandSender sender) {
+    public void onPlugins(EclipseSender sender) {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
         TextComponent.Builder component = Component.text();
         component.append(Component.text("Plugins (" + plugins.length + "): "));
