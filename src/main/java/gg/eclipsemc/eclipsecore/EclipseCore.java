@@ -17,6 +17,9 @@ import gg.eclipsemc.eclipsecore.manager.PterodactylManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
+import gg.eclipsemc.eclipsecore.object.EclipseCommandSender;
+import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
+import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import gg.eclipsemc.eclipsecore.parser.EclipseModuleParser;
 import gg.eclipsemc.eclipsecore.parser.argument.EclipseModuleArgument;
 import io.leangen.geantyref.TypeToken;
@@ -28,6 +31,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
@@ -37,8 +41,8 @@ import java.util.logging.Level;
 
 public final class EclipseCore extends JavaPlugin {
 
-    PaperCommandManager<CommandSender> paperCommandManager;
-    AnnotationParser<CommandSender> annotationParser;
+    PaperCommandManager<EclipseSender> paperCommandManager;
+    AnnotationParser<EclipseSender> annotationParser;
     PterodactylManager pterodactylManager;
     PlayerDataManager playerDataManager;
     MongoClient mongoClient;
@@ -114,8 +118,28 @@ public final class EclipseCore extends JavaPlugin {
     }
 
     private void registerCommands() throws Exception {
+
+        Function<CommandSender, EclipseSender> commandSenderMapper;
+        Function<EclipseSender, CommandSender> backwardsCommandSenderMapper;
+
+        commandSenderMapper = commandSender -> {
+            if (commandSender instanceof Player) {
+                return EclipsePlayer.getPlayerFromBukkit(((Player) commandSender).getPlayer());
+            } else {
+                return new EclipseCommandSender(commandSender);
+            }
+        };
+
+        backwardsCommandSenderMapper = eclipseSender -> {
+            if (eclipseSender instanceof EclipsePlayer) {
+                return ((EclipsePlayer) eclipseSender).getBukkitPlayer();
+            } else {
+                return ((EclipseCommandSender) eclipseSender).getSender();
+            }
+        };
+
         paperCommandManager = new PaperCommandManager<>(
-                this, CommandExecutionCoordinator.simpleCoordinator(), Function.identity(), Function.identity());
+                this, CommandExecutionCoordinator.simpleCoordinator(), commandSenderMapper, backwardsCommandSenderMapper);
         paperCommandManager.setSetting(CommandManager.ManagerSettings.ALLOW_UNSAFE_REGISTRATION, true);
         paperCommandManager.registerAsynchronousCompletions();
         paperCommandManager.registerBrigadier();
@@ -129,11 +153,11 @@ public final class EclipseCore extends JavaPlugin {
                         .build();
         annotationParser = new AnnotationParser<>(
                 paperCommandManager,
-                CommandSender.class,
+                EclipseSender.class,
                 commandMetaFunction
         );
-        final CaptionRegistry<CommandSender> registry = paperCommandManager.getCaptionRegistry();
-        if (registry instanceof final FactoryDelegatingCaptionRegistry<CommandSender> factoryRegistry) {
+        final CaptionRegistry<EclipseSender> registry = paperCommandManager.getCaptionRegistry();
+        if (registry instanceof final FactoryDelegatingCaptionRegistry<EclipseSender> factoryRegistry) {
             factoryRegistry.registerMessageFactory(
                     Caption.of("argument.parse.failure.module"),
                     (context, key) -> "'{input}' is not a valid module"
@@ -227,7 +251,7 @@ public final class EclipseCore extends JavaPlugin {
         return modules;
     }
 
-    public AnnotationParser<CommandSender> getAnnotationParser() {
+    public AnnotationParser<EclipseSender> getAnnotationParser() {
         return annotationParser;
     }
 

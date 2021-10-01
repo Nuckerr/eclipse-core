@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
@@ -153,15 +154,15 @@ public class EclipseModule implements Listener {
         return enableOnStartup;
     }
 
-    protected Command.Builder<CommandSender> getCommandBuilder(String name, String... aliases) {
+    protected Command.Builder<EclipseSender> getCommandBuilder(String name, String... aliases) {
         return this.eclipseCore.paperCommandManager.commandBuilder(name, aliases);
     }
 
-    protected void registerCommand(Command.Builder<CommandSender> command) {
+    protected void registerCommand(Command.Builder<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
-    protected void registerCommand(Command<CommandSender> command) {
+    protected void registerCommand(Command<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
