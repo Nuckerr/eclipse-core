@@ -57,7 +57,8 @@ public final class EclipseCore extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
         enableStartupModules();
-        pterodactylManager = new PterodactylManager(this);
+        // FIXME: 01/10/2021 pterodactyl manager dosent work
+        //pterodactylManager = new PterodactylManager(this);
         String host = "database.mongo.host", username = "database.mongo.authentication.username", password = "database.mongo" +
                 ".authentication.password", port = "database.mongo.port", auth = "database.mongo.authentication.enabled";
         String uri;
@@ -126,7 +127,7 @@ public final class EclipseCore extends JavaPlugin {
                 CommandMeta.simple()
                         .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
                         .build();
-        annotationParser = new AnnotationParser<CommandSender>(
+        annotationParser = new AnnotationParser<>(
                 paperCommandManager,
                 CommandSender.class,
                 commandMetaFunction
