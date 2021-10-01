@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import redis.clients.jedis.Jedis;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,7 @@ public final class EclipseCore extends JavaPlugin {
     PterodactylManager pterodactylManager;
     PlayerDataManager playerDataManager;
     MongoClient mongoClient;
+    Jedis jedis;
     public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
@@ -77,6 +79,7 @@ public final class EclipseCore extends JavaPlugin {
                     .replace("[port]", String.valueOf(getConfig().getInt(port)));
         }
         mongoClient = new MongoClient(new MongoClientURI(uri));
+        jedis = new Jedis(getConfig().getString("database.redis.host"), getConfig().getInt("database.redis.port"));
 
         playerDataManager = new PlayerDataManager(this);
     }
@@ -87,6 +90,9 @@ public final class EclipseCore extends JavaPlugin {
         this.disableModules();
     }
 
+    /**
+     * Reloads every module
+     */
     public void reloadModules() {
         for (final EclipseModule module : modules) {
             module.reload();
@@ -104,6 +110,9 @@ public final class EclipseCore extends JavaPlugin {
         }
     }
 
+    /**
+     * Enables all modules set to start at launch
+     */
     public void enableStartupModules() {
         for (final EclipseModule module : modules) {
             if (module.shouldEnableOnStartup())
@@ -111,6 +120,9 @@ public final class EclipseCore extends JavaPlugin {
         }
     }
 
+    /**
+     * Disables every module
+     */
     public void disableModules() {
         for (final EclipseModule module : modules) {
             module.disable();
@@ -265,6 +277,11 @@ public final class EclipseCore extends JavaPlugin {
 
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
+    }
+
+
+    public Jedis getJedis() {
+        return jedis;
     }
 
 }

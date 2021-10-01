@@ -4,9 +4,7 @@ import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.entity.Player;
 
 public class FlyCommand {
 

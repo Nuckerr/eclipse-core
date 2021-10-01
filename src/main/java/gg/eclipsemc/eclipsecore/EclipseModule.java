@@ -1,19 +1,22 @@
 package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.Command;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.mongodb.client.MongoCollection;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import gg.eclipsemc.eclipsecore.object.EclipseSender;
+import gg.eclipsemc.eclipsecore.object.RedisPacket;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import redis.clients.jedis.JedisPubSub;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,7 @@ public class EclipseModule implements Listener {
     public EclipseModule(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
         setupConfig();
+        setupMongo();
     }
 
     public String getName() {
@@ -74,23 +78,37 @@ public class EclipseModule implements Listener {
         collection = eclipseCore.getMongoClient().getDatabase("EclipseCore").getCollection(this.getName());
     }
 
+    /**
+     * Used to enable the module **DO NOT OVERRIDE**
+     */
     public void enable() {
         if (isEnabled)
             return;
         onEnable();
     }
 
+    /**
+     * Override this method to execute code when the module starts
+     * **YOU MUST SUPER THIS METHOD AT THE BOTTOM OF YOUR METHOD**
+     */
     protected void onEnable() {
         registerListener(this);
         isEnabled = true;
     }
 
+    /**
+     * Used to disable the module **DO NOT OVERRIDE**
+     */
     public void disable() {
         if (!isEnabled)
             return;
         onDisable();
     }
 
+    /**
+     * Override this method to execute code when the module stops
+     * **YOU MUST SUPER THIS METHOD AT THE BOTTOM OF YOUR METHOD**
+     */
     protected void onDisable() {
         listeners.forEach(HandlerList::unregisterAll);
         tasks.forEach(BukkitTask::cancel);
@@ -99,12 +117,19 @@ public class EclipseModule implements Listener {
         isEnabled = false;
     }
 
+    /**
+     * Used to reload a module. **DO NOT OVERRIDE**
+     */
     public void reload() {
         if (!isEnabled)
             return;
         onReload();
     }
 
+    /**
+     * Execute code when your module reloads.
+     * **MAKE SURE TO SUPER THIS METHOD)
+     */
     protected void onReload() {
         this.getConfig().forceReload(); // I swear this is safe
     }
@@ -113,34 +138,65 @@ public class EclipseModule implements Listener {
         return isEnabled;
     }
 
+    /**
+     * Register listener to the plugin
+     * @param listener The listener you are registering
+     */
     protected void registerListener(Listener listener) {
         listeners.add(listener);
         eclipseCore.getServer().getPluginManager().registerEvents(listener, eclipseCore);
     }
 
+    /**
+     * Register a command
+     * @param instance Your command
+     * @param <T> The class type of your command
+     */
     protected <T> void registerCommand(final @NonNull T instance) {
         eclipseCore.getAnnotationParser().parse(instance);
     }
 
+    /**
+     * Run a runnable async
+     * @param runnable the runnable you are running
+     */
     protected void runAsync(Runnable runnable) {
         eclipseCore.getServer().getScheduler().runTaskAsynchronously(eclipseCore, runnable);
     }
 
+    /**
+     * Schedule a runnable to run after a delay
+     * @param runnable the runnable you are running
+     * @param delay the delay before running it
+     * @see EclipseModule#scheduleAsync(Runnable, long) to schedule a runnable async
+     */
     protected void schedule(Runnable runnable, long delay) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLater(eclipseCore, runnable, delay);
         tasks.add(task);
     }
 
+    /**
+     * Run a runnable repeatably
+     * @param runnable the runnable you are running
+     * @param delay the delay before it starts running
+     * @param interval the interval between each time the runnable runs
+     */
     protected void scheduleRepeating(Runnable runnable, long delay, long interval) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimer(eclipseCore, runnable, delay, interval);
         tasks.add(task);
     }
 
+    /**
+     * Same as {@link EclipseModule#schedule(Runnable, long)} except async
+     */
     protected void scheduleAsync(Runnable runnable, long delay) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLaterAsynchronously(eclipseCore, runnable, delay);
         tasks.add(task);
     }
 
+    /**
+     * Same as {@link EclipseModule#scheduleRepeating(Runnable, long, long)} except async
+     */
     protected void scheduleRepeatingAsync(Runnable runnable, long delay, long interval) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimerAsynchronously(eclipseCore, runnable, delay, interval);
         tasks.add(task);
@@ -154,18 +210,30 @@ public class EclipseModule implements Listener {
         return enableOnStartup;
     }
 
+    /**
+     * Method to access cloud's command builder
+     */
     protected Command.Builder<EclipseSender> getCommandBuilder(String name, String... aliases) {
         return this.eclipseCore.paperCommandManager.commandBuilder(name, aliases);
     }
 
+    /**
+     * Method to register cloud commands
+     */
     protected void registerCommand(Command.Builder<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
+    /**
+     * Method to register cloud commands
+     */
     protected void registerCommand(Command<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
+    /**
+     * @return this module's specific collection
+     */
     public MongoCollection<Document> getCollection() {
         return collection;
     }
@@ -201,6 +269,32 @@ public class EclipseModule implements Listener {
         });
     }
 
+    /**
+     * Register a redis packet
+     * @param packet the packet your registering
+     */
+    protected void registerPacket(RedisPacket packet) {
+        eclipseCore.getJedis().subscribe(new JedisPubSub() {
+            @Override
+            public void onMessage(final String channel, final String message) {
+                if(channel.equals(packet.getChannel()))
+                    packet.receivePacket(new Gson().fromJson(message, JsonElement.class));
+            }
+        }, packet.getChannel());
+    }
+
+    /**
+     * Send a redis packet
+     * @param packet the packet you are sending
+     */
+    protected void sendPacket(RedisPacket packet) {
+        eclipseCore.getJedis().publish(packet.getChannel(), new Gson().fromJson(packet.sendPacket(), String.class));
+    }
+
+    /**
+     * Delete a document from the modules collection
+     * @param filter the filter to find the document
+     */
     protected void deleteDocument(Bson filter) {
         collection.findOneAndDelete(filter);
     }

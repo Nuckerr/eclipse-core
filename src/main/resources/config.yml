@@ -26,3 +26,6 @@ database:
       enabled: true
       username: root
       password: ""
+  redis:
+    host: "127.0.0.1"
+    port: 25573
