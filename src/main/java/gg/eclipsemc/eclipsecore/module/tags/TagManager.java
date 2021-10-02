@@ -1,8 +1,6 @@
 package gg.eclipsemc.eclipsecore.module.tags;
 
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
-import gg.eclipsemc.eclipsecore.module.tags.packet.TagDisplayUpdatePacket;
-import gg.eclipsemc.eclipsecore.module.tags.packet.TagNameUpdatePacket;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -45,19 +43,18 @@ public class TagManager {
             @Override
             public void setDisplay(final String display) {
                 module.saveDocument(new Document("name", this.getName()), "display", display);
-                module.sendPacket(new TagDisplayUpdatePacket(this.getName(), display, TagManager.this));
             }
 
             @Override
             public void setName(final String name) {
                 String oldName = this.getName();
                 module.saveDocument(new Document("name", this.getName()), "name", name);
-                module.sendPacket(new TagNameUpdatePacket(oldName, name, TagManager.this));
             }
         };
 
         module.saveDocument(new Document("name", name), new Document("name", name).append("display", tag.getDisplay()));
 
+        return tag;
     }
 
     public Tag getTag(String name) {
@@ -78,14 +75,12 @@ public class TagManager {
             @Override
             public void setDisplay(String display) {
                 module.saveDocument(new Document("name", this.getName()), "display", display);
-                module.sendPacket(new TagDisplayUpdatePacket(this.getName(), display, TagManager.this));
             }
 
             @Override
             public void setName(String name) {
                 String oldName = this.getName();
                 module.saveDocument(new Document("name", this.getName()), "name", name);
-                module.sendPacket(new TagNameUpdatePacket(oldName, name, TagManager.this));
             }
         };
     }
