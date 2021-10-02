@@ -142,7 +142,7 @@ public class EclipseModule implements Listener {
      * Register listener to the plugin
      * @param listener The listener you are registering
      */
-    protected void registerListener(Listener listener) {
+    public void registerListener(Listener listener) {
         listeners.add(listener);
         eclipseCore.getServer().getPluginManager().registerEvents(listener, eclipseCore);
     }
@@ -152,7 +152,7 @@ public class EclipseModule implements Listener {
      * @param instance Your command
      * @param <T> The class type of your command
      */
-    protected <T> void registerCommand(final @NonNull T instance) {
+    public <T> void registerCommand(final @NonNull T instance) {
         eclipseCore.getAnnotationParser().parse(instance);
     }
 
@@ -160,7 +160,7 @@ public class EclipseModule implements Listener {
      * Run a runnable async
      * @param runnable the runnable you are running
      */
-    protected void runAsync(Runnable runnable) {
+    public void runAsync(Runnable runnable) {
         eclipseCore.getServer().getScheduler().runTaskAsynchronously(eclipseCore, runnable);
     }
 
@@ -170,7 +170,7 @@ public class EclipseModule implements Listener {
      * @param delay the delay before running it
      * @see EclipseModule#scheduleAsync(Runnable, long) to schedule a runnable async
      */
-    protected void schedule(Runnable runnable, long delay) {
+    public void schedule(Runnable runnable, long delay) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLater(eclipseCore, runnable, delay);
         tasks.add(task);
     }
@@ -181,7 +181,7 @@ public class EclipseModule implements Listener {
      * @param delay the delay before it starts running
      * @param interval the interval between each time the runnable runs
      */
-    protected void scheduleRepeating(Runnable runnable, long delay, long interval) {
+    public void scheduleRepeating(Runnable runnable, long delay, long interval) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimer(eclipseCore, runnable, delay, interval);
         tasks.add(task);
     }
@@ -189,7 +189,7 @@ public class EclipseModule implements Listener {
     /**
      * Same as {@link EclipseModule#schedule(Runnable, long)} except async
      */
-    protected void scheduleAsync(Runnable runnable, long delay) {
+    public void scheduleAsync(Runnable runnable, long delay) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLaterAsynchronously(eclipseCore, runnable, delay);
         tasks.add(task);
     }
@@ -197,7 +197,7 @@ public class EclipseModule implements Listener {
     /**
      * Same as {@link EclipseModule#scheduleRepeating(Runnable, long, long)} except async
      */
-    protected void scheduleRepeatingAsync(Runnable runnable, long delay, long interval) {
+    public void scheduleRepeatingAsync(Runnable runnable, long delay, long interval) {
         BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimerAsynchronously(eclipseCore, runnable, delay, interval);
         tasks.add(task);
     }
@@ -213,21 +213,21 @@ public class EclipseModule implements Listener {
     /**
      * Method to access cloud's command builder
      */
-    protected Command.Builder<EclipseSender> getCommandBuilder(String name, String... aliases) {
+    public Command.Builder<EclipseSender> getCommandBuilder(String name, String... aliases) {
         return this.eclipseCore.paperCommandManager.commandBuilder(name, aliases);
     }
 
     /**
      * Method to register cloud commands
      */
-    protected void registerCommand(Command.Builder<EclipseSender> command) {
+    public void registerCommand(Command.Builder<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
     /**
      * Method to register cloud commands
      */
-    protected void registerCommand(Command<EclipseSender> command) {
+    public void registerCommand(Command<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
@@ -241,7 +241,7 @@ public class EclipseModule implements Listener {
     /**
      * Will append a document (or create if it is missing) in the module's collection
      */
-    protected void saveDocument(Bson filter, Document document) {
+    public void saveDocument(Bson filter, Document document) {
         Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
             Document res = collection.find(filter).first();
             if(res == null) {
@@ -256,7 +256,7 @@ public class EclipseModule implements Listener {
     /**
      * Will append a document (or create if it is missing) in the module's collection
      */
-    protected void saveDocument(Bson filter, String key, String newValue) {
+    public void saveDocument(Bson filter, String key, String newValue) {
         Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
             Document document = new Document(key, newValue);
 
@@ -269,25 +269,15 @@ public class EclipseModule implements Listener {
         });
     }
 
-    /**
-     * Register a redis packet
-     * @param packet the packet your registering
-     */
-    protected void registerPacket(RedisPacket packet) {
-        eclipseCore.getJedis().subscribe(new JedisPubSub() {
-            @Override
-            public void onMessage(final String channel, final String message) {
-                if(channel.equals(packet.getChannel()))
-                    packet.receivePacket(new Gson().fromJson(message, JsonElement.class));
-            }
-        }, packet.getChannel());
+    public Document getDocument(Bson filter) {
+        return collection.find(filter).first();
     }
 
     /**
      * Send a redis packet
      * @param packet the packet you are sending
      */
-    protected void sendPacket(RedisPacket packet) {
+    public void sendPacket(RedisPacket packet) {
         eclipseCore.getJedis().publish(packet.getChannel(), new Gson().fromJson(packet.sendPacket(), String.class));
     }
 
@@ -295,7 +285,7 @@ public class EclipseModule implements Listener {
      * Delete a document from the modules collection
      * @param filter the filter to find the document
      */
-    protected void deleteDocument(Bson filter) {
+    public void deleteDocument(Bson filter) {
         collection.findOneAndDelete(filter);
     }
 }
