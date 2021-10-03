@@ -53,21 +53,7 @@ public final class EclipseCore extends JavaPlugin {
     public final Set<EclipseModule> modules = new HashSet<>();
 
     @Override
-    public void onEnable() {
-        saveDefaultConfig();
-        modules.add(new TabModule(this));
-        modules.add(new ChatModule(this));
-        modules.add(new EssentialsModule(this));
-        modules.add(new TagModule(this));
-        try {
-            registerCommands();
-        } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Failed registering commands!", e);
-            getServer().getPluginManager().disablePlugin(this);
-        }
-        enableStartupModules();
-        // FIXME: 01/10/2021 pterodactyl manager dosent work
-        //pterodactylManager = new PterodactylManager(this);
+    public void onLoad() {
         String host = "database.mongo.host", username = "database.mongo.authentication.username", password = "database.mongo" +
                 ".authentication.password", port = "database.mongo.port", auth = "database.mongo.authentication.enabled";
         String uri;
@@ -82,12 +68,30 @@ public final class EclipseCore extends JavaPlugin {
                     .replace("[port]", String.valueOf(getConfig().getInt(port)));
         }
         mongoClient = new MongoClient(new MongoClientURI(uri));
+    }
+
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
+        modules.add(new TabModule(this));
+        modules.add(new ChatModule(this));
+        modules.add(new EssentialsModule(this));
+        modules.add(new TagModule(this));
+        try {
+            registerCommands();
+        } catch (Exception e) {
+            getLogger().log(Level.SEVERE, "Failed registering commands!", e);
+            getServer().getPluginManager().disablePlugin(this);
+        }
+        // FIXME: 01/10/2021 pterodactyl manager dosent work
+        //pterodactylManager = new PterodactylManager(this);
         jedis = new Jedis(getConfig().getString("database.redis.host"), getConfig().getInt("database.redis.port"));
 
         playerDataManager = new PlayerDataManager(this);
 
         expansion = new PAPIExpansion(this); // Register placeholder api expansion
         expansion.register();
+        enableStartupModules();
     }
 
     @Override
@@ -159,6 +163,7 @@ public final class EclipseCore extends JavaPlugin {
         paperCommandManager = new PaperCommandManager<>(
                 this, CommandExecutionCoordinator.simpleCoordinator(), commandSenderMapper, backwardsCommandSenderMapper);
         paperCommandManager.setSetting(CommandManager.ManagerSettings.ALLOW_UNSAFE_REGISTRATION, true);
+        paperCommandManager.setSetting(CommandManager.ManagerSettings.OVERRIDE_EXISTING_COMMANDS, true);
         paperCommandManager.registerAsynchronousCompletions();
         paperCommandManager.registerBrigadier();
         paperCommandManager.getParserRegistry().registerParserSupplier(
