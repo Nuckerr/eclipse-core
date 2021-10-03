@@ -6,10 +6,8 @@ import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 
 public class GamemodeCommand {
     
@@ -20,31 +18,23 @@ public class GamemodeCommand {
     public void onGamemode(EclipsePlayer sender, String gm) {
         Component message = Component.text("Your gamemode has been set to ").color(NamedTextColor.GREEN);
         gm = gm.toLowerCase();
-        switch (gm){
-            case "c":
-            case "creative":
-                sender.getBukkitPlayer().setGameMode(GameMode.CREATIVE);
-                message.append(Component.text("creative")).color(NamedTextColor.GREEN);
-                break;
-            case "s":
-            case "survival":
+        switch (gm) {
+            case "s", "survival" -> {
                 sender.getBukkitPlayer().setGameMode(GameMode.SURVIVAL);
                 message.append(Component.text("survival")).color(NamedTextColor.GREEN);
-                break;
-            case "sp":
-            case "spectator":
+            }
+            case "sp", "spectator" -> {
                 sender.getBukkitPlayer().setGameMode(GameMode.SPECTATOR);
                 message.append(Component.text("spectator")).color(NamedTextColor.GREEN);
-                break;
-            case "a":
-            case "adventure":
+            }
+            case "a", "adventure" -> {
                 sender.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
                 message.append(Component.text("adventure")).color(NamedTextColor.GREEN);
-                break;
-            default:
+            }
+            default -> {
                 sender.getBukkitPlayer().setGameMode(GameMode.CREATIVE);
                 message.append(Component.text("creative")).color(NamedTextColor.GREEN);
-                break;
+            }
         }
         sender.sendMessage(message);
     }

@@ -23,7 +23,6 @@ import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import gg.eclipsemc.eclipsecore.parser.EclipseModuleParser;
 import gg.eclipsemc.eclipsecore.parser.argument.EclipseModuleArgument;
 import io.leangen.geantyref.TypeToken;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;

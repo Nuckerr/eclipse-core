@@ -3,9 +3,6 @@ package gg.eclipsemc.eclipsecore.module.essentials.command;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
-
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.Player;
 
 public class CraftAnvilCommand {

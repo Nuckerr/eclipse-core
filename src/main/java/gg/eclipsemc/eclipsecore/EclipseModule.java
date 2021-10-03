@@ -2,7 +2,6 @@ package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.Command;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.mongodb.client.MongoCollection;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
@@ -16,7 +15,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import redis.clients.jedis.JedisPubSub;
 
 import java.io.File;
 import java.io.IOException;
