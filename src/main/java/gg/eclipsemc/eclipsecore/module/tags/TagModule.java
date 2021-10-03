@@ -6,7 +6,9 @@ import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.PAPIExpansion;
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 /**
  * @author Nucker
@@ -29,7 +31,7 @@ public class TagModule extends EclipseModule {
             public String requestPlaceholder(final EclipsePlayer player, final String placeholder) {
                 for (final Tag tag : manager.getTags()) {
                     if(placeholder.equalsIgnoreCase("tag_" + tag.getName()))
-                        return tag.getDisplay();
+                        return PlainTextComponentSerializer.plainText().serialize(tag.getDisplay());
                 }
                 return null;
             }
@@ -59,9 +61,16 @@ public class TagModule extends EclipseModule {
                 .argument(StringArgument.of("newdisplayname"))
                 .permission("eclipsecore.tags.edit")
                 .handler(c -> {
-                    this.manager.getTag(c.get("name")).setDisplay(c.get("newdisplayname"));
+                    this.manager.getTag(c.get("name")).setDisplay(MiniMessage.get().parse(c.get("newdisplayname")));
                     c.getSender().sendMessage(MiniMessage.get().parse("<green>Set " + c.get("name") + "'s display name to " + c.get(
                             "displayname")));
+                }));
+        this.registerCommand(this.getCommandBuilder("tag", "tags")
+                .literal("delete").argument(StringArgument.of("name"))
+                .permission("eclipsecore.tags.delete")
+                .handler(c -> {
+                    this.manager.deleteTag((String) c.get("name"));
+                    c.getSender().sendMessage(MiniMessage.get().parse("<green>Created tag " + c.get("name")));
                 }));
     }
 

@@ -17,6 +17,7 @@ import gg.eclipsemc.eclipsecore.manager.PterodactylManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
+import gg.eclipsemc.eclipsecore.module.tags.TagModule;
 import gg.eclipsemc.eclipsecore.object.EclipseCommandSender;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.EclipseSender;
@@ -57,6 +58,7 @@ public final class EclipseCore extends JavaPlugin {
         modules.add(new TabModule(this));
         modules.add(new ChatModule(this));
         modules.add(new EssentialsModule(this));
+        modules.add(new TagModule(this));
         try {
             registerCommands();
         } catch (Exception e) {

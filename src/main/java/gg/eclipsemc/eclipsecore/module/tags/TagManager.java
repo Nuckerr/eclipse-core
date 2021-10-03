@@ -1,6 +1,9 @@
 package gg.eclipsemc.eclipsecore.module.tags;
 
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -36,13 +39,14 @@ public class TagManager {
             }
 
             @Override
-            public String getDisplay() {
-                return name;
+            public Component getDisplay() {
+                return Component.text(name);
             }
 
             @Override
-            public void setDisplay(final String display) {
-                module.saveDocument(new Document("name", this.getName()), "display", display);
+            public void setDisplay(final Component display) {
+                module.saveDocument(new Document("name", this.getName()), "display",
+                        GsonComponentSerializer.gson().serialize(display));
             }
 
             @Override
@@ -68,13 +72,14 @@ public class TagManager {
             }
 
             @Override
-            public String getDisplay() {
-                return doc.getString("display");
+            public Component getDisplay() {
+                return GsonComponentSerializer.gson().deserialize(doc.getString("display"));
             }
 
             @Override
-            public void setDisplay(String display) {
-                module.saveDocument(new Document("name", this.getName()), "display", display);
+            public void setDisplay(Component display) {
+                module.saveDocument(new Document("name", this.getName()), "display",
+                        GsonComponentSerializer.gson().serialize(display));
             }
 
             @Override
@@ -83,5 +88,13 @@ public class TagManager {
                 module.saveDocument(new Document("name", this.getName()), "name", name);
             }
         };
+    }
+
+    public void deleteTag(Tag tag) {
+        module.deleteDocument(new Document("name", tag.getName()));
+    }
+
+    public void deleteTag(String name) {
+        this.deleteTag(this.getTag(name));
     }
 }
