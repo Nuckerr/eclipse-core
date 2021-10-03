@@ -6,3 +6,6 @@ authors: [ SimplyMerlin, Nucker ]
 description: Core.
 website: https://eclipsemc.gg/
 depend: [PlaceholderAPI]
+libraries :
+  - org.mongodb:mongodb-driver:3.12.10
+  - redis.clients:jedis:3.6.3

@@ -1,13 +1,20 @@
 package gg.eclipsemc.eclipsecore.module.essentials.command;
 
+import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
+import cloud.commandframework.annotations.suggestions.Suggestions;
+import cloud.commandframework.context.CommandContext;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
+import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class FeedRepairHealCommand {
     @CommandMethod("feed")
@@ -25,10 +32,16 @@ public class FeedRepairHealCommand {
         p.getBukkitPlayer().setHealth(p.getBukkitPlayer().getMaxHealth());
         p.getBukkitPlayer().sendMessage(Component.text("You have been healed!").color(NamedTextColor.GREEN));
     }
-    @CommandMethod("repair <hand|all|armor>")
+
+    @Suggestions("repairtype")
+    public List<String> repairTypeSuggestions(final CommandContext<EclipseSender> context, final String input) {
+        return Arrays.asList("all", "hand", "armor");
+    }
+
+    @CommandMethod("repair <type>")
     @CommandDescription("repairs all of the specified options")
     @CommandPermission("eclipsecore.essentials.repair")
-    public void onRepair(EclipsePlayer p, String type){
+    public void onRepair(EclipsePlayer p, @Argument(value = "type", suggestions = "repairtype") String type){
         type = type.toLowerCase();
         switch(type){
             case "all":
