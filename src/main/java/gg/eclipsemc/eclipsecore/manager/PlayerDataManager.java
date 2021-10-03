@@ -7,6 +7,7 @@ import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,13 +19,11 @@ import java.util.UUID;
  */
 public class PlayerDataManager {
 
-    private final EclipseCore core;
     private final MongoCollection<Document> collection;
     private final List<DefaultData<?>> defaults;
     private final Map<UUID, Document> cache;
 
     public PlayerDataManager(EclipseCore core) {
-        this.core = core;
         this.collection = core.getMongoClient().getDatabase("EclipseCore").getCollection("playerdata");
         this.defaults = new ArrayList<>();
         this.cache = new HashMap<>();
@@ -54,15 +53,16 @@ public class PlayerDataManager {
 
     public Document getOrCreate(UUID uuid) {
         if(cache.containsKey(uuid))
-            return cache.get(uuid);
+            return this.checkForDefaults(cache.get(uuid), uuid);
+
         Bson filter = new Document("_id", uuid);
         if(collection.find(filter).first() == null) {
             Document res = new Document("_id", uuid);
             for (final DefaultData<?> def: defaults) {
                 res.put(def.getKey(), def.parseData(uuid));
             }
-            return res;
-        } else return collection.find(filter).first();
+            return this.checkForDefaults(res, uuid);
+        } else return this.checkForDefaults(collection.find(filter).first(), uuid);
     }
 
     public Document findByFilter(Bson filter) {
@@ -103,5 +103,15 @@ public class PlayerDataManager {
     public void updateCache(UUID uuid) {
         cache.remove(uuid);
         cache.put(uuid, this.getOrCreate(uuid));
+    }
+
+    private Document checkForDefaults(Document document, UUID uuid) {
+        for (final DefaultData<?> def : this.getDefaults()) {
+            if(!document.containsKey(def.getKey())) {
+                document.append(def.getKey(), def.parseData(uuid));
+            }
+        }
+
+        return document;
     }
 }

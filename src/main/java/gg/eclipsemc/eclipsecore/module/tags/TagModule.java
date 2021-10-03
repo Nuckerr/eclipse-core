@@ -6,7 +6,6 @@ import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.PAPIExpansion;
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 

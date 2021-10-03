@@ -13,7 +13,7 @@ import cloud.commandframework.paper.PaperCommandManager;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
-import gg.eclipsemc.eclipsecore.manager.PterodactylManager;
+import gg.eclipsemc.eclipsecore.manager.RedisManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
@@ -45,13 +45,15 @@ public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<EclipseSender> paperCommandManager;
     AnnotationParser<EclipseSender> annotationParser;
-    PterodactylManager pterodactylManager;
     PlayerDataManager playerDataManager;
     MongoClient mongoClient;
-    Jedis jedis;
     PAPIExpansion expansion;
+    RedisManager redisManager;
     public final Set<EclipseModule> modules = new HashSet<>();
 
+    /**
+     * Used for setting up databases before modules are loaded
+     */
     @Override
     public void onLoad() {
         String host = "database.mongo.host", username = "database.mongo.authentication.username", password = "database.mongo" +
@@ -68,6 +70,8 @@ public final class EclipseCore extends JavaPlugin {
                     .replace("[port]", String.valueOf(getConfig().getInt(port)));
         }
         mongoClient = new MongoClient(new MongoClientURI(uri));
+
+        redisManager = new RedisManager(this);
     }
 
     @Override
@@ -83,9 +87,6 @@ public final class EclipseCore extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Failed registering commands!", e);
             getServer().getPluginManager().disablePlugin(this);
         }
-        // FIXME: 01/10/2021 pterodactyl manager dosent work
-        //pterodactylManager = new PterodactylManager(this);
-        jedis = new Jedis(getConfig().getString("database.redis.host"), getConfig().getInt("database.redis.port"));
 
         playerDataManager = new PlayerDataManager(this);
 
@@ -278,10 +279,6 @@ public final class EclipseCore extends JavaPlugin {
         return annotationParser;
     }
 
-    public PterodactylManager getPterodactylManager() {
-        return pterodactylManager;
-    }
-
     public MongoClient getMongoClient() {
         return mongoClient;
     }
@@ -294,8 +291,8 @@ public final class EclipseCore extends JavaPlugin {
         return expansion;
     }
 
-    public Jedis getJedis() {
-        return jedis;
+    public RedisManager getRedisManager() {
+        return redisManager;
     }
 
 }

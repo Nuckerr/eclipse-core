@@ -1,0 +1,67 @@
+package gg.eclipsemc.eclipsecore.manager;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import gg.eclipsemc.eclipsecore.EclipseCore;
+import gg.eclipsemc.eclipsecore.object.RedisPacket;
+import org.bukkit.Bukkit;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+/**
+ * @author Nucker
+ */
+public class RedisManager {
+
+    private final EclipseCore core;
+    private final Jedis jedis;
+    private final Map<String, RedisPacket> packets;
+
+    public RedisManager(EclipseCore core) {
+        this.core = core;
+        jedis = new Jedis(core.getConfig().getString("database.redis.host"), core.getConfig().getInt("database.redis.port"));
+        this.packets = new HashMap<>();
+
+        jedis.subscribe(new JedisPubSub() {
+            @Override
+            public void onMessage(final String channel, final String message) {
+                if(channel.equals("EclipseCore")) {
+                    JsonElement element = new Gson().fromJson(message, JsonElement.class);
+                    RedisPacket packet = packets.get(element.getAsJsonObject().get("identifier").getAsString());
+                    if(packet == null) {
+                        Bukkit.getLogger().log(Level.SEVERE, "Unable to handle redis packet " + element.getAsJsonObject().get(
+                                "identifier").getAsString() + ".");
+                        return;
+                    }
+
+                    packet.handlePacket(element.getAsJsonObject().get("data").getAsJsonObject());
+                }
+            }
+        });
+    }
+
+    public void sendPacket(RedisPacket packet) {
+        JsonObject object = new JsonObject();
+        object.addProperty("identifier", packet.getIdentifier());
+        object.add("data", packet.getPacketData());
+
+        jedis.publish("EclipseCore", new Gson().toJson(object));
+    }
+
+    public void registerPacket(RedisPacket packet) {
+        this.packets.put(packet.getIdentifier(), packet);
+    }
+
+    public EclipseCore getCore() {
+        return core;
+    }
+
+    public Jedis getJedis() {
+        return jedis;
+    }
+}

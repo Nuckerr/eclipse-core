@@ -1,0 +1,3 @@
+server-name: "Dev Server #1"
+messages:
+  server-join: "<rainbow>%player% joined %server%"
