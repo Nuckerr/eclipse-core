@@ -25,10 +25,12 @@ public class TimeCommand {
             case "dayime":
             case "sun":
                 timeSet = 1000;
+                break;
             case "night":
             case "nightime":
             case "moon":
                 timeSet = 13000;
+                break;
             default:
                 timeSet = 0;
         }
