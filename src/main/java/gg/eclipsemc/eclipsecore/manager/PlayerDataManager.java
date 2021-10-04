@@ -59,9 +59,9 @@ public class PlayerDataManager {
         if(collection.find(filter).first() == null) {
             Document res = new Document("_id", uuid);
             for (final DefaultData<?> def: defaults) {
-                res.put(def.getKey(), def.parseData(uuid));
+                res.put(def.getKey(), def.parseData(uuid) == null ? "null" : def.parseData(uuid));
             }
-            return this.checkForDefaults(res, uuid);
+            return res;
         } else return this.checkForDefaults(collection.find(filter).first(), uuid);
     }
 

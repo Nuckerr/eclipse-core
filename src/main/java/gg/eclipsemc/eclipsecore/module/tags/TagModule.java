@@ -21,6 +21,11 @@ public class TagModule extends EclipseModule {
     }
 
     @Override
+    public String getName() {
+        return "Tags";
+    }
+
+    @Override
     protected void onEnable() {
         this.manager = new TagManager(this);
         this.registerCommands();

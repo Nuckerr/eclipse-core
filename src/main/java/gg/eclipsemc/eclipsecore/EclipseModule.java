@@ -283,6 +283,7 @@ public class EclipseModule implements Listener {
     }
 
     public void registerPacket(RedisPacket packet) {
+        Bukkit.getLogger().info("Registering packet " + packet.getIdentifier());
         eclipseCore.getRedisManager().registerPacket(packet);
     }
 

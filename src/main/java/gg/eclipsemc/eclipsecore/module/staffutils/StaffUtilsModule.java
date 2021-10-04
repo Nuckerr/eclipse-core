@@ -1,11 +1,21 @@
 package gg.eclipsemc.eclipsecore.module.staffutils;
 
+import cloud.commandframework.arguments.standard.StringArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.AdminChatPacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerLoadUpPacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOfflinePacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOnlinePacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffChatPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffJoinPacket;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -32,12 +42,28 @@ public class StaffUtilsModule extends EclipseModule {
         this.registerPackets();
         this.registerCommands();
         this.registerListeners();
-        
+
+        this.sendPacket(new ServerLoadUpPacket(this));
+
+        this.schedule(() -> this.sendPacket(new ServerOnlinePacket(this)), 0L); // First tick doesn't happen till after the
+        // server is finished loading. Thus, this is called when the server is finished loading
+
         super.onEnable();
+    }
+
+    @Override
+    protected void onDisable() {
+        this.sendPacket(new ServerOfflinePacket(this));
+        super.onDisable();
     }
 
     private void registerPackets() {
         this.registerPacket(new StaffJoinPacket());
+        this.registerPacket(new ServerOfflinePacket());
+        this.registerPacket(new ServerOnlinePacket());
+        this.registerPacket(new ServerLoadUpPacket());
+        this.registerPacket(new StaffChatPacket());
+        this.registerPacket(new AdminChatPacket());
     }
 
     private void registerDefaults() {
@@ -51,7 +77,26 @@ public class StaffUtilsModule extends EclipseModule {
 
 
     private void registerCommands() {
-
+        this.registerCommand(this.getCommandBuilder("staffchat", "staffc", "schat", "sc")
+                .argument(StringArgument.of("message", StringArgument.StringMode.GREEDY))
+                .permission("eclipsecore.staffutils.staffchat")
+                .handler(c -> {
+                    if(c.getSender() instanceof EclipsePlayer sender)
+                        new StaffChatPacket(sender, MiniMessage.get().parse(c.get("message")), StaffUtilsModule.this);
+                    else {
+                        c.getSender().sendMessage(Component.text("You must be ingame to run this command").color(NamedTextColor.RED));
+                    }
+                }));
+        this.registerCommand(this.getCommandBuilder("adminchat", "adminc", "achat", "ac")
+                .argument(StringArgument.of("message", StringArgument.StringMode.GREEDY))
+                .permission("eclipsecore.staffutils.adminchat")
+                .handler(c -> {
+                    if(c.getSender() instanceof EclipsePlayer sender)
+                        new AdminChatPacket(sender, MiniMessage.get().parse(c.get("message")), StaffUtilsModule.this);
+                    else {
+                        c.getSender().sendMessage(Component.text("You must be ingame to run this command").color(NamedTextColor.RED));
+                    }
+                }));
     }
 
     private void registerListeners() {
@@ -63,6 +108,8 @@ public class StaffUtilsModule extends EclipseModule {
 
                 if(!player.getPlayerData().getBool("isOnline")) {
                     StaffUtilsModule.this.sendPacket(new StaffJoinPacket(player, StaffUtilsModule.this));
+                }else {
+
                 }
 
                 player.getPlayerData().set("isOnline", true);

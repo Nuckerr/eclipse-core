@@ -16,6 +16,7 @@ import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
 import gg.eclipsemc.eclipsecore.manager.RedisManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.module.essentials.EssentialsModule;
+import gg.eclipsemc.eclipsecore.module.staffutils.StaffUtilsModule;
 import gg.eclipsemc.eclipsecore.module.tab.TabModule;
 import gg.eclipsemc.eclipsecore.module.tags.TagModule;
 import gg.eclipsemc.eclipsecore.object.EclipseCommandSender;
@@ -81,6 +82,7 @@ public final class EclipseCore extends JavaPlugin {
         modules.add(new ChatModule(this));
         modules.add(new EssentialsModule(this));
         modules.add(new TagModule(this));
+        modules.add(new StaffUtilsModule(this));
         try {
             registerCommands();
         } catch (Exception e) {
