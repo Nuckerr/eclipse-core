@@ -89,6 +89,9 @@ public class PlayerDataManager {
            this.key = key;
         }
 
+        /**
+         * DO NOT USE A ECLIPSE PLAYER CLASS OR ANY PLAYERDATA IN THIS METHOD
+         */
         public abstract T parseData(UUID uuid);
 
         public String getKey() {

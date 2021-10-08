@@ -44,6 +44,10 @@ public class StaffJoinPacket extends RedisPacket {
         msg = msg.replaceText(b -> b.matchLiteral("%server%").replacement(serverName));
 
         Utilities.broadcastStaffMessage(msg);
+
+        if(Bukkit.getPlayer(playerName) != null) {
+            Bukkit.getPlayer(playerName).sendMessage(msg);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import gg.eclipsemc.eclipsecore.module.staffutils.utils.Utilities;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.RedisPacket;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 /**
  * @author Nucker
@@ -37,6 +38,10 @@ public class StaffSwitchServerPacket extends RedisPacket {
         msg = msg.replaceText(b -> b.matchLiteral("%player%").replacement(player));
 
         Utilities.broadcastStaffMessage(msg);
+
+        if(Bukkit.getPlayer(player) != null) {
+            Bukkit.getPlayer(player).sendMessage(msg);
+        }
     }
 
     @Override

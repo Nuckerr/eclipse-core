@@ -70,13 +70,14 @@ public class StaffUtilsModule extends EclipseModule {
         eclipseCore.getPlayerDataManager().addDefault(new PlayerDataManager.DefaultData<Boolean>("isOnline") {
             @Override
             public Boolean parseData(final UUID uuid) {
-                return OfflineEclipsePlayer.getPlayerByUUID(uuid).isOnline();
+                return Bukkit.getOfflinePlayer(uuid).isOnline();
             }
         });
     }
 
 
     private void registerCommands() {
+        //TODO: fix these commands not working (something to do with the packets)
         this.registerCommand(this.getCommandBuilder("staffchat", "staffc", "schat", "sc")
                 .argument(StringArgument.of("message", StringArgument.StringMode.GREEDY))
                 .permission("eclipsecore.staffutils.staffchat")
