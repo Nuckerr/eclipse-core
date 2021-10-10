@@ -4,12 +4,15 @@ import cloud.commandframework.arguments.standard.StringArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
+import gg.eclipsemc.eclipsecore.module.staffutils.listener.ConnectionListeners;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.AdminChatPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerLoadUpPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOfflinePacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOnlinePacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffChatPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffJoinPacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffQuitPacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffSwitchServerPacket;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import net.kyori.adventure.text.Component;
@@ -19,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
@@ -29,6 +33,7 @@ public class StaffUtilsModule extends EclipseModule {
 
     public StaffUtilsModule(final EclipseCore eclipseCore) {
         super(eclipseCore);
+        this.sendPacket(new ServerLoadUpPacket(this));
     }
 
     @Override
@@ -41,12 +46,22 @@ public class StaffUtilsModule extends EclipseModule {
         this.registerDefaults();
         this.registerPackets();
         this.registerCommands();
-        this.registerListeners();
-
-        this.sendPacket(new ServerLoadUpPacket(this));
+        this.registerListener(new ConnectionListeners(this));
 
         this.schedule(() -> this.sendPacket(new ServerOnlinePacket(this)), 0L); // First tick doesn't happen till after the
         // server is finished loading. Thus, this is called when the server is finished loading
+        eclipseCore.getPlayerDataManager().addDefault(new PlayerDataManager.DefaultData<Boolean>("isJoinAlert") {
+            @Override
+            public Boolean parseData(final UUID uuid) {
+                return false;
+            }
+        });
+        eclipseCore.getPlayerDataManager().addDefault(new PlayerDataManager.DefaultData<String>("lastServer") {
+            @Override
+            public String parseData(final UUID uuid) {
+                return "null";
+            }
+        });
 
         super.onEnable();
     }
@@ -64,6 +79,8 @@ public class StaffUtilsModule extends EclipseModule {
         this.registerPacket(new ServerLoadUpPacket());
         this.registerPacket(new StaffChatPacket());
         this.registerPacket(new AdminChatPacket());
+        this.registerPacket(new StaffQuitPacket());
+        this.registerPacket(new StaffSwitchServerPacket());
     }
 
     private void registerDefaults() {
@@ -83,7 +100,8 @@ public class StaffUtilsModule extends EclipseModule {
                 .permission("eclipsecore.staffutils.staffchat")
                 .handler(c -> {
                     if(c.getSender() instanceof EclipsePlayer sender)
-                        new StaffChatPacket(sender, MiniMessage.get().parse(c.get("message")), StaffUtilsModule.this);
+                        this.sendPacket(new StaffChatPacket(sender, MiniMessage.get().parse(c.get("message")),
+                                StaffUtilsModule.this));
                     else {
                         c.getSender().sendMessage(Component.text("You must be ingame to run this command").color(NamedTextColor.RED));
                     }
@@ -93,30 +111,13 @@ public class StaffUtilsModule extends EclipseModule {
                 .permission("eclipsecore.staffutils.adminchat")
                 .handler(c -> {
                     if(c.getSender() instanceof EclipsePlayer sender)
-                        new AdminChatPacket(sender, MiniMessage.get().parse(c.get("message")), StaffUtilsModule.this);
+                        this.sendPacket(new AdminChatPacket(sender, MiniMessage.get().parse(c.get("message")), StaffUtilsModule.this));
                     else {
                         c.getSender().sendMessage(Component.text("You must be ingame to run this command").color(NamedTextColor.RED));
                     }
                 }));
     }
 
-    private void registerListeners() {
-        this.registerListener(new Listener() {
-
-            @EventHandler
-            public void onPlayerLogin(PlayerLoginEvent event) {
-                EclipsePlayer player = EclipsePlayer.getPlayerFromBukkit(event.getPlayer());
-
-                if(!player.getPlayerData().getBool("isOnline")) {
-                    StaffUtilsModule.this.sendPacket(new StaffJoinPacket(player, StaffUtilsModule.this));
-                }else {
-
-                }
-
-                player.getPlayerData().set("isOnline", true);
-            }
-        });
-    }
 
     public String getServerName() {
         return this.getConfig().getString("server-name");

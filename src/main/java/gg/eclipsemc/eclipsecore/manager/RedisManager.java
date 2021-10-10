@@ -31,7 +31,7 @@ public class RedisManager {
         this.core = core;
 
         CompletableFuture.runAsync(() -> {
-            Bukkit.getLogger().info("Connecting to redis on thread " + Thread.currentThread().getName());
+            core.getLogger().info("Connecting to redis on thread " + Thread.currentThread().getName());
             /*
             jedis = new Jedis(core.getConfig().getString("database.redis.host"), core.getConfig().getInt("database.redis.port"));
             if(!core.getConfig().getString("database.redis.password").equals("")) {
@@ -86,12 +86,15 @@ public class RedisManager {
     }
 
     public void sendPacket(RedisPacket packet) {
+        this.sendPacket(packet, "EclipseCore");
+    }
+    public void sendPacket(RedisPacket packet, String channel) {
         JsonObject object = new JsonObject();
         object.addProperty("identifier", packet.getIdentifier());
         object.add("data", packet.getPacketData());
         Bukkit.getLogger().info("we got this far");
 
-        Bukkit.getScheduler().runTaskAsynchronously(core, () -> pub.publish("EclipseCore", new Gson().toJson(object)));
+        CompletableFuture.runAsync(() -> pub.publish(channel, new Gson().toJson(object)));
     }
 
     public void registerPacket(RedisPacket packet) {

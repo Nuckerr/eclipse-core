@@ -12,7 +12,7 @@ chat:
   nameformat: "%aqua_player_prefix%%aqua_player_color%%aqua_player_nick%"
   namehover: "<gray>Name: <yellow>%aqua_player_color%%aqua_player_nick%\n<gray>Rank: <yellow>%aqua_player_rank%\n<gray>Mine: <yellow>%ultraprison_rank%"
 
-
+server-name: "Hub-1"
 database:
   mongo:
     host: "127.0.0.1"

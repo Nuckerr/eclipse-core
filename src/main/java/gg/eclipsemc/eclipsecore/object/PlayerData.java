@@ -55,7 +55,7 @@ public class PlayerData {
 
     public void set(String key, Object data) {
         document.append(key, data);
-        manager.updateDoc(id,document);
+        manager.updateDoc(id, document);
     }
 
 

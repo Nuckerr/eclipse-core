@@ -72,7 +72,7 @@ public class EclipseModule implements Listener {
     }
 
     protected void setupMongo() {
-        collection = eclipseCore.getMongoClient().getDatabase("EclipseCore").getCollection(this.getName());
+        collection = eclipseCore.createCollection(this.getName());
     }
 
     /**

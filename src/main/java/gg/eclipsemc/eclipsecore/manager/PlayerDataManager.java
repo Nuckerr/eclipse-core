@@ -1,5 +1,6 @@
 package gg.eclipsemc.eclipsecore.manager;
 
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import org.bson.Document;
@@ -24,7 +25,7 @@ public class PlayerDataManager {
     private final Map<UUID, Document> cache;
 
     public PlayerDataManager(EclipseCore core) {
-        this.collection = core.getMongoClient().getDatabase("EclipseCore").getCollection("playerdata");
+        this.collection = core.createCollection("playerdata");
         this.defaults = new ArrayList<>();
         this.cache = new HashMap<>();
         this.addDefaults();
@@ -61,6 +62,7 @@ public class PlayerDataManager {
             for (final DefaultData<?> def: defaults) {
                 res.put(def.getKey(), def.parseData(uuid) == null ? "null" : def.parseData(uuid));
             }
+            collection.insertOne(res);
             return res;
         } else return this.checkForDefaults(collection.find(filter).first(), uuid);
     }
@@ -70,7 +72,8 @@ public class PlayerDataManager {
     }
 
     public void updateDoc(UUID uuid, Document document) {
-        collection.findOneAndReplace(new Document("_id", uuid), document);
+        collection.replaceOne(new Document("_id", uuid), document);
+
     }
 
     public void addDefault(DefaultData<?> data) {

@@ -12,6 +12,8 @@ import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCommandException;
+import com.mongodb.client.MongoCollection;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
 import gg.eclipsemc.eclipsecore.manager.RedisManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
@@ -31,13 +33,12 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import redis.clients.jedis.Jedis;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -100,7 +101,11 @@ public final class EclipseCore extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getLogger().info("Disabling EclipseCore");
         this.disableModules();
+        redisManager.closeConnection();
+        mongoClient.close();
+        getLogger().info("&aEclipseCore is now disabled");
     }
 
     /**
@@ -271,6 +276,16 @@ public final class EclipseCore extends JavaPlugin {
                         .permission("eclipsecore.module.reload")
                         .handler(c -> ((EclipseModule) c.get("module")).reload())
         );
+    }
+
+    public MongoCollection<Document> createCollection(String name) {
+        try {
+            mongoClient.getDatabase("EclipseCore").createCollection(name);
+            return mongoClient.getDatabase("EclipseCore").getCollection(name);
+        }catch (MongoCommandException e) {
+            if(e.getErrorCode() != 48) e.printStackTrace();
+            return mongoClient.getDatabase("EclipseCore").getCollection(name);
+        }
     }
 
     public Set<EclipseModule> getModules() {

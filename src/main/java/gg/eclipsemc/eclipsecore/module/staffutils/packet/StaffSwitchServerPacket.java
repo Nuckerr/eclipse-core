@@ -39,9 +39,6 @@ public class StaffSwitchServerPacket extends RedisPacket {
 
         Utilities.broadcastStaffMessage(msg);
 
-        if(Bukkit.getPlayer(player) != null) {
-            Bukkit.getPlayer(player).sendMessage(msg);
-        }
     }
 
     @Override

@@ -2,34 +2,26 @@ package gg.eclipsemc.eclipsecore.module.staffutils.packet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.leonhard.storage.Yaml;
-import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.module.staffutils.StaffUtilsModule;
 import gg.eclipsemc.eclipsecore.module.staffutils.utils.Utilities;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.RedisPacket;
-import jdk.jshell.execution.Util;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 /**
  * @author Nucker
  */
-public class StaffJoinPacket extends RedisPacket {
+public class StaffQuitPacket extends RedisPacket {
 
     private OfflineEclipsePlayer player;
     private StaffUtilsModule module;
 
-    public StaffJoinPacket() {
+    public StaffQuitPacket() {
         super();
     }
 
-    public StaffJoinPacket(OfflineEclipsePlayer player, StaffUtilsModule module) {
+    public StaffQuitPacket(OfflineEclipsePlayer player, StaffUtilsModule module) {
         this.player = player;
         this.module = module;
     }
@@ -39,7 +31,7 @@ public class StaffJoinPacket extends RedisPacket {
         String playerName = message.getAsJsonObject().get("player").getAsString();
         String serverName = message.getAsJsonObject().get("server").getAsString();
 
-        Component msg = Utilities.getMessage("staff-join");
+        Component msg = Utilities.getMessage("staff-leave");
         msg = msg.replaceText(b -> b.matchLiteral("%player%").replacement(playerName));
         msg = msg.replaceText(b -> b.matchLiteral("%server%").replacement(serverName));
 
@@ -62,7 +54,6 @@ public class StaffJoinPacket extends RedisPacket {
 
     @Override
     public String getIdentifier() {
-        return "StaffJoin";
+        return "StaffQuit";
     }
-
 }
