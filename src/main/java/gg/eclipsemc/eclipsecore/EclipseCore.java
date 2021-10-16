@@ -35,9 +35,14 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import wtf.nucker.simplemenus.adventure.MenuManager;
+import wtf.nucker.simplemenus.adventure.MenuSettings;
+import wtf.nucker.simplemenus.adventure.utils.ItemBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -52,6 +57,8 @@ public final class EclipseCore extends JavaPlugin {
     MongoClient mongoClient;
     PAPIExpansion expansion;
     RedisManager redisManager;
+    MenuManager menuManager;
+
     public final Set<EclipseModule> modules = new HashSet<>();
 
     /**
@@ -95,6 +102,11 @@ public final class EclipseCore extends JavaPlugin {
 
         expansion = new PAPIExpansion(this); // Register placeholder api expansion
         expansion.register();
+        menuManager = new MenuManager(this);
+        MenuSettings settings = new MenuSettings();
+        settings.setDefaultFillerItem(new ItemBuilder().setType(Material.BLACK_STAINED_GLASS).setName(Component.empty()).build());
+        menuManager.setSettings(settings);
+
         enableStartupModules();
     }
 

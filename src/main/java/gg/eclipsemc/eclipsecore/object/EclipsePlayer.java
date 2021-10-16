@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import wtf.nucker.simplemenus.adventure.Menu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,10 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
         message = ChatColor.translateAlternateColorCodes('&', message);
         Component comp = MiniMessage.get().parse(message);
         player.sendMessage(comp);
+    }
+
+    public void openMenu(Menu menu) {
+        menu.switchMenu(this.getBukkitPlayer());
     }
 
     public void sendMessage(Component component) {

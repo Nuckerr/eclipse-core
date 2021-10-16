@@ -1,3 +1,5 @@
+// Decompiled with: FernFlower
+// Class Version: 16
 package gg.eclipsemc.eclipsecore;
 
 import cloud.commandframework.Command;
@@ -7,6 +9,10 @@ import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import gg.eclipsemc.eclipsecore.object.RedisPacket;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
@@ -15,16 +21,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 public class EclipseModule implements Listener {
-
     protected EclipseCore eclipseCore;
-    protected final Set<Listener> listeners = new HashSet<>();
-    protected final Set<BukkitTask> tasks = new HashSet<>();
+    protected final Set<Listener> listeners = new HashSet();
+    protected final Set<BukkitTask> tasks = new HashSet();
     private boolean isEnabled;
     private boolean enableOnStartup;
     private Yaml config;
@@ -32,262 +32,184 @@ public class EclipseModule implements Listener {
 
     public EclipseModule(EclipseCore eclipseCore) {
         this.eclipseCore = eclipseCore;
-        setupConfig();
-        setupMongo();
+        this.setupConfig();
+        this.setupMongo();
     }
 
     public String getName() {
         return "NotOverwrittenNagSomeone";
     }
 
-    /**
-     * Override to change the name of the config
-     */
     public String getConfigName() {
         return this.getName().toLowerCase() + ".yml";
     }
 
     protected void setupConfig() {
         File configFile = null;
+
         try {
-            File dir = eclipseCore.getDataFolder();
-            if(!dir.exists()) {
+            File dir = this.eclipseCore.getDataFolder();
+            if (!dir.exists()) {
                 dir.mkdir();
             }
+
             configFile = new File(dir, this.getConfigName());
-            if(!configFile.exists()) {
-                if(eclipseCore.getResource(this.getConfigName()) == null) {
+            if (!configFile.exists()) {
+                if (this.eclipseCore.getResource(this.getConfigName()) == null) {
                     configFile.createNewFile();
-                }else {
-                    eclipseCore.saveResource(this.getConfigName(), false);
+                } else {
+                    this.eclipseCore.saveResource(this.getConfigName(), false);
                 }
             }
-        }catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException var3) {
+            var3.printStackTrace();
         }
+
         this.config = new Yaml(configFile);
         this.config.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
-        this.config.setReloadSettings(ReloadSettings.MANUALLY); // Use Yaml#forceReload() (its safe, I swear)
-        enableOnStartup = this.config.getBoolean("enableonstartup");
+        this.config.setReloadSettings(ReloadSettings.MANUALLY);
+        this.enableOnStartup = this.config.getBoolean("enableonstartup");
     }
 
     protected void setupMongo() {
-        collection = eclipseCore.createCollection(this.getName());
+        this.collection = this.eclipseCore.createCollection(this.getName());
     }
 
-    /**
-     * Used to enable the module **DO NOT OVERRIDE**
-     */
     public void enable() {
-        if (isEnabled)
-            return;
-        onEnable();
+        if (!this.isEnabled) {
+            this.onEnable();
+        }
     }
 
-    /**
-     * Override this method to execute code when the module starts
-     * **YOU MUST SUPER THIS METHOD AT THE BOTTOM OF YOUR METHOD**
-     */
     protected void onEnable() {
-        registerListener(this);
-        isEnabled = true;
+        this.registerListener(this);
+        this.isEnabled = true;
     }
 
-    /**
-     * Used to disable the module **DO NOT OVERRIDE**
-     */
     public void disable() {
-        if (!isEnabled)
-            return;
-        onDisable();
+        if (this.isEnabled) {
+            this.onDisable();
+        }
     }
 
-    /**
-     * Override this method to execute code when the module stops
-     * **YOU MUST SUPER THIS METHOD AT THE BOTTOM OF YOUR METHOD**
-     */
     protected void onDisable() {
-        listeners.forEach(HandlerList::unregisterAll);
-        tasks.forEach(BukkitTask::cancel);
-        listeners.clear();
-        tasks.clear();
-        isEnabled = false;
+        this.listeners.forEach(HandlerList::unregisterAll);
+        this.tasks.forEach(BukkitTask::cancel);
+        this.listeners.clear();
+        this.tasks.clear();
+        this.isEnabled = false;
     }
 
-    /**
-     * Used to reload a module. **DO NOT OVERRIDE**
-     */
     public void reload() {
-        if (!isEnabled)
-            return;
-        onReload();
+        if (this.isEnabled) {
+            this.onReload();
+        }
     }
 
-    /**
-     * Execute code when your module reloads.
-     * **MAKE SURE TO SUPER THIS METHOD)
-     */
     protected void onReload() {
-        this.getConfig().forceReload(); // I swear this is safe
+        this.getConfig().forceReload();
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return this.isEnabled;
     }
 
-    /**
-     * Register listener to the plugin
-     * @param listener The listener you are registering
-     */
     public void registerListener(Listener listener) {
-        listeners.add(listener);
-        eclipseCore.getServer().getPluginManager().registerEvents(listener, eclipseCore);
+        this.listeners.add(listener);
+        this.eclipseCore.getServer().getPluginManager().registerEvents(listener, this.eclipseCore);
     }
 
-    /**
-     * Register a command
-     * @param instance Your command
-     * @param <T> The class type of your command
-     */
-    public <T> void registerCommand(final @NonNull T instance) {
-        eclipseCore.getAnnotationParser().parse(instance);
+    public <T> void registerCommand(@NonNull T instance) {
+        this.eclipseCore.getAnnotationParser().parse(instance);
     }
 
-    /**
-     * Run a runnable async
-     * @param runnable the runnable you are running
-     */
     public void runAsync(Runnable runnable) {
-        eclipseCore.getServer().getScheduler().runTaskAsynchronously(eclipseCore, runnable);
+        this.eclipseCore.getServer().getScheduler().runTaskAsynchronously(this.eclipseCore, runnable);
     }
 
-    /**
-     * Schedule a runnable to run after a delay
-     * @param runnable the runnable you are running
-     * @param delay the delay before running it
-     * @see EclipseModule#scheduleAsync(Runnable, long) to schedule a runnable async
-     */
     public void schedule(Runnable runnable, long delay) {
-        BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLater(eclipseCore, runnable, delay);
-        tasks.add(task);
+        BukkitTask task = this.eclipseCore.getServer().getScheduler().runTaskLater(this.eclipseCore, runnable, delay);
+        this.tasks.add(task);
     }
 
-    /**
-     * Run a runnable repeatably
-     * @param runnable the runnable you are running
-     * @param delay the delay before it starts running
-     * @param interval the interval between each time the runnable runs
-     */
     public void scheduleRepeating(Runnable runnable, long delay, long interval) {
-        BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimer(eclipseCore, runnable, delay, interval);
-        tasks.add(task);
+        BukkitTask task = this.eclipseCore.getServer().getScheduler().runTaskTimer(this.eclipseCore, runnable, delay, interval);
+        this.tasks.add(task);
     }
 
-    /**
-     * Same as {@link EclipseModule#schedule(Runnable, long)} except async
-     */
     public void scheduleAsync(Runnable runnable, long delay) {
-        BukkitTask task = eclipseCore.getServer().getScheduler().runTaskLaterAsynchronously(eclipseCore, runnable, delay);
-        tasks.add(task);
+        BukkitTask task = this.eclipseCore.getServer().getScheduler().runTaskLaterAsynchronously(this.eclipseCore, runnable, delay);
+        this.tasks.add(task);
     }
 
-    /**
-     * Same as {@link EclipseModule#scheduleRepeating(Runnable, long, long)} except async
-     */
     public void scheduleRepeatingAsync(Runnable runnable, long delay, long interval) {
-        BukkitTask task = eclipseCore.getServer().getScheduler().runTaskTimerAsynchronously(eclipseCore, runnable, delay, interval);
-        tasks.add(task);
+        BukkitTask task = this.eclipseCore.getServer().getScheduler().runTaskTimerAsynchronously(this.eclipseCore, runnable, delay, interval);
+        this.tasks.add(task);
     }
 
     public Yaml getConfig() {
-        return config;
+        return this.config;
     }
 
     public boolean shouldEnableOnStartup() {
-        return enableOnStartup;
+        return this.enableOnStartup;
     }
 
-    /**
-     * Method to access cloud's command builder
-     */
     public Command.Builder<EclipseSender> getCommandBuilder(String name, String... aliases) {
         return this.eclipseCore.paperCommandManager.commandBuilder(name, aliases);
     }
 
-    /**
-     * Method to register cloud commands
-     */
     public void registerCommand(Command.Builder<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
-    /**
-     * Method to register cloud commands
-     */
     public void registerCommand(Command<EclipseSender> command) {
         this.eclipseCore.paperCommandManager.command(command);
     }
 
-    /**
-     * @return this module's specific collection
-     */
     public MongoCollection<Document> getCollection() {
-        return collection;
+        return this.collection;
     }
 
-    /**
-     * Will append a document (or create if it is missing) in the module's collection
-     */
     public void saveDocument(Bson filter, Document document) {
-        Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
-            Document res = collection.find(filter).first();
-            if(res == null) {
-                collection.insertOne(document);
-            }else {
-                collection.findOneAndUpdate(filter, document);
+        Bukkit.getScheduler().runTaskAsynchronously(this.eclipseCore, () -> {
+            Document res = (Document)this.collection.find(filter).first();
+            if (res == null) {
+                this.collection.insertOne(document);
+            } else {
+                this.collection.findOneAndUpdate(filter, (Bson)document);
             }
+
         });
     }
 
-
-    /**
-     * Will append a document (or create if it is missing) in the module's collection
-     */
     public void saveDocument(Bson filter, String key, String newValue) {
-        Bukkit.getScheduler().runTaskAsynchronously(eclipseCore, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(this.eclipseCore, () -> {
             Document document = new Document(key, newValue);
-
-            Document res = collection.find(filter).first();
-            if(res == null) {
-                collection.insertOne(document);
-            }else {
-                collection.findOneAndUpdate(filter, document);
+            Document res = (Document)this.collection.find(filter).first();
+            if (res == null) {
+                this.collection.insertOne(document);
+            } else {
+                this.collection.findOneAndUpdate(filter, (Bson)document);
             }
+
         });
     }
 
     public Document getDocument(Bson filter) {
-        return collection.find(filter).first();
+        return (Document)this.collection.find(filter).first();
     }
 
-    /**
-     * Send a redis packet
-     * @param packet the packet you are sending
-     */
     public void sendPacket(RedisPacket packet) {
-        eclipseCore.getRedisManager().sendPacket(packet);
+        this.eclipseCore.getRedisManager().sendPacket(packet);
     }
 
     public void registerPacket(RedisPacket packet) {
         Bukkit.getLogger().info("Registering packet " + packet.getIdentifier());
-        eclipseCore.getRedisManager().registerPacket(packet);
+        this.eclipseCore.getRedisManager().registerPacket(packet);
     }
 
-    /**
-     * Delete a document from the modules collection
-     * @param filter the filter to find the document
-     */
     public void deleteDocument(Bson filter) {
-        collection.findOneAndDelete(filter);
+        this.collection.findOneAndDelete(filter);
     }
 }

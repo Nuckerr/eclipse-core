@@ -12,17 +12,11 @@ import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOnlinePacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffChatPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffJoinPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffQuitPacket;
-import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffSwitchServerPacket;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
@@ -80,7 +74,6 @@ public class StaffUtilsModule extends EclipseModule {
         this.registerPacket(new StaffChatPacket());
         this.registerPacket(new AdminChatPacket());
         this.registerPacket(new StaffQuitPacket());
-        this.registerPacket(new StaffSwitchServerPacket());
     }
 
     private void registerDefaults() {
