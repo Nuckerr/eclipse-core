@@ -7,7 +7,6 @@ import gg.eclipsemc.eclipsecore.module.staffutils.utils.Utilities;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.RedisPacket;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 
 /**
  * @author Nucker

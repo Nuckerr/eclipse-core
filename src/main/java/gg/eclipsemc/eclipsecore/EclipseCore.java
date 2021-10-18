@@ -36,9 +36,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import wtf.nucker.simplemenus.adventure.MenuManager;
 import wtf.nucker.simplemenus.adventure.MenuSettings;
@@ -46,6 +51,7 @@ import wtf.nucker.simplemenus.adventure.utils.ItemBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -53,11 +59,11 @@ public final class EclipseCore extends JavaPlugin {
 
     PaperCommandManager<EclipseSender> paperCommandManager;
     AnnotationParser<EclipseSender> annotationParser;
-    PlayerDataManager playerDataManager;
-    MongoClient mongoClient;
-    PAPIExpansion expansion;
-    RedisManager redisManager;
-    MenuManager menuManager;
+    private PlayerDataManager playerDataManager;
+    private MongoClient mongoClient;
+    private PAPIExpansion expansion;
+    private RedisManager redisManager;
+    private MenuManager menuManager;
 
     public final Set<EclipseModule> modules = new HashSet<>();
 
@@ -97,7 +103,6 @@ public final class EclipseCore extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Failed registering commands!", e);
             getServer().getPluginManager().disablePlugin(this);
         }
-
         playerDataManager = new PlayerDataManager(this);
 
         expansion = new PAPIExpansion(this); // Register placeholder api expansion
@@ -106,6 +111,20 @@ public final class EclipseCore extends JavaPlugin {
         MenuSettings settings = new MenuSettings();
         settings.setDefaultFillerItem(new ItemBuilder().setType(Material.BLACK_STAINED_GLASS).setName(Component.empty()).build());
         menuManager.setSettings(settings);
+
+        getServer().getPluginManager().registerEvents(new Listener() {
+
+            @EventHandler
+            public void onLogin(PlayerLoginEvent event) {
+                EclipsePlayer.getPlayerFromBukkit(event.getPlayer()); // Load player into cache
+            }
+
+            @EventHandler
+            public void onLogout(PlayerQuitEvent event) {
+                EclipsePlayer.getPlayerCache().remove(event.getPlayer().getUniqueId()); // Unload from cache
+            }
+
+            }, this);
 
         enableStartupModules();
     }
@@ -322,6 +341,10 @@ public final class EclipseCore extends JavaPlugin {
 
     public RedisManager getRedisManager() {
         return redisManager;
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
 }

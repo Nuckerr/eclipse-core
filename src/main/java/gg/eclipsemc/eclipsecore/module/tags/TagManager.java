@@ -2,7 +2,6 @@ package gg.eclipsemc.eclipsecore.module.tags;
 
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bson.Document;
 

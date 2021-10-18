@@ -1,6 +1,5 @@
 package gg.eclipsemc.eclipsecore.module.essentials.command;
 
-import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;

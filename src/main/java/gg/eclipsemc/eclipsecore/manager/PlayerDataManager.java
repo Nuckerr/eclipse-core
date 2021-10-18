@@ -1,14 +1,13 @@
 package gg.eclipsemc.eclipsecore.manager;
 
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

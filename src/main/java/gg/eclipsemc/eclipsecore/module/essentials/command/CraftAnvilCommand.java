@@ -4,7 +4,6 @@ import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import org.bukkit.entity.Player;
 
 public class CraftAnvilCommand {
     @CommandMethod("anvil")

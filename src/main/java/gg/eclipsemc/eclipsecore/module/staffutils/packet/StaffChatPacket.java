@@ -1,6 +1,5 @@
 package gg.eclipsemc.eclipsecore.module.staffutils.packet;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gg.eclipsemc.eclipsecore.module.staffutils.StaffUtilsModule;

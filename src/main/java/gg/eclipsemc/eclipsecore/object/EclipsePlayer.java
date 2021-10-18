@@ -21,6 +21,8 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
     }
 
     public static EclipsePlayer getPlayerFromBukkit(Player player) {
+        if(cacheContainsUUID(player.getUniqueId()))
+            return getPlayerCache().get(player.getUniqueId());
         return new EclipsePlayer(player);
     }
 
@@ -30,7 +32,15 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
             Bukkit.getLogger().log(Level.SEVERE, "Failed to load player class for `" + uuid + "` because they are not online");
             return null;
         }
-        return new EclipsePlayer(player);
+        return getPlayerFromBukkit(player);
+    }
+
+    private static boolean cacheContainsUUID(UUID uuid) {
+        for (final UUID id : getPlayerCache().keySet()) {
+            if(uuid == id) return true;
+        }
+
+        return false;
     }
 
 

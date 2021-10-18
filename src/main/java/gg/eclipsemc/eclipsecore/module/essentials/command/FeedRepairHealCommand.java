@@ -10,7 +10,6 @@ import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;

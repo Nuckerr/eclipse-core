@@ -2,20 +2,11 @@ package gg.eclipsemc.eclipsecore.module.staffutils.packet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.leonhard.storage.Yaml;
-import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.module.staffutils.StaffUtilsModule;
 import gg.eclipsemc.eclipsecore.module.staffutils.utils.Utilities;
 import gg.eclipsemc.eclipsecore.object.OfflineEclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.RedisPacket;
-import jdk.jshell.execution.Util;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 /**
  * @author Nucker
