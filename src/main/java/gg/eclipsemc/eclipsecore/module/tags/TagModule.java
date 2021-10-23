@@ -4,8 +4,11 @@ import cloud.commandframework.arguments.standard.StringArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.PAPIExpansion;
+import gg.eclipsemc.eclipsecore.module.tags.menu.TagMenu;
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
@@ -40,10 +43,44 @@ public class TagModule extends EclipseModule {
                 return null;
             }
         });
+        eclipseCore.getPlaceholderAPIExpansion().registerPlaceholders(new PAPIExpansion.Placeholder() {
+            @Override
+            public String requestPlaceholder(final EclipsePlayer player, final String placeholder) {
+                if(placeholder.equalsIgnoreCase("%player_tag%")) {
+                    Tag tag = manager.getPlayerTag(player);
+                    if(tag == null){
+                        return "";
+                    }else {
+                        return PlainTextComponentSerializer.plainText().serialize(tag.getDisplay());
+                    }
+                }
+                return null;
+            }
+        });
         super.onEnable();
     }
 
     private void registerCommands() {
+        this.registerCommand(this.getCommandBuilder("tag", "tags")
+                .handler(c -> {
+                    EclipsePlayer player = EclipsePlayer.getFromSender(c.getSender());
+                    player.openMenu(new TagMenu(this.getManager()));
+                }));
+        this.registerCommand(this.getCommandBuilder("tag", "tags")
+                .argument(StringArgument.of("tag"))
+                .handler(c -> {
+                    EclipsePlayer player = EclipsePlayer.getFromSender(c.getSender());
+                    Tag tag = this.getManager().getTag(c.get("tag"));
+                    if(tag == null) {
+                        player.sendMessage(Component.text("Invalid tag name").color(NamedTextColor.RED));
+                    }else {
+                        if(player.getBukkitPlayer().hasPermission(tag.getPermission())) {
+                            this.getManager().setPlayerTag(player, tag);
+                        }else {
+                            player.sendMessage(Component.text("You dont have permission to equip this tag").color(NamedTextColor.RED));
+                        }
+                    }
+                }));
         this.registerCommand(this.getCommandBuilder("tag", "tags")
                 .literal("create").argument(StringArgument.of("name"))
                 .permission("eclipsecore.tags.create")

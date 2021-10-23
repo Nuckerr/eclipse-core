@@ -14,4 +14,8 @@ public interface Tag {
     void setDisplay(Component display);
 
     void setName(String name);
+
+    default String getPermission() {
+        return "eclipsecore.tags.tag." + this.getName();
+    }
 }

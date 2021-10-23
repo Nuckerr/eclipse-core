@@ -1,9 +1,17 @@
 package gg.eclipsemc.eclipsecore.module.tags;
 
 import gg.eclipsemc.eclipsecore.module.tags.object.Tag;
+import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +36,15 @@ public class TagManager {
         }
 
         return res;
+    }
+
+    public Tag setPlayerTag(EclipsePlayer player, Tag tag) {
+        player.getPlayerData().set("tag", tag.getName());
+        return tag;
+    }
+
+    public Tag getPlayerTag(EclipsePlayer player) {
+        return this.getTag(player.getPlayerData().getString("tag"));
     }
 
     public Tag createTag(String name) {
@@ -87,6 +104,27 @@ public class TagManager {
                 module.saveDocument(new Document("name", this.getName()), "name", name);
             }
         };
+    }
+
+    public List<ItemStack> getTagsAsItemStacks() {
+        List<ItemStack> items = new ArrayList<>();
+        for (final Tag tag : this.getTags()) {
+            ItemStack item = new ItemStack(Material.NAME_TAG);
+            ItemMeta meta = item.getItemMeta();
+            meta.displayName(Component.text(tag.getName()).color(NamedTextColor.GREEN));
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.empty());
+            lore.add(Component.text("&Your tag will look like: "));
+            lore.add(tag.getDisplay());
+            lore.add(Component.empty());
+            meta.lore(lore);
+            meta.setLocalizedName(tag.getName());
+            item.setItemMeta(meta);
+
+            items.add(item);
+        }
+
+        return items;
     }
 
     public void deleteTag(Tag tag) {

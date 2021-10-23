@@ -35,6 +35,13 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
         return getPlayerFromBukkit(player);
     }
 
+    public static EclipsePlayer getFromSender(EclipseSender sender) {
+        if(sender instanceof EclipsePlayer) {
+            return (EclipsePlayer) sender;
+        }
+        return null;
+    }
+
     private static boolean cacheContainsUUID(UUID uuid) {
         for (final UUID id : getPlayerCache().keySet()) {
             if(uuid == id) return true;
