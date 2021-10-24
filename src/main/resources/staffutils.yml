@@ -1,3 +1,4 @@
+enableonstartup: true
 server-name: "Dev Server #1"
 messages:
   staff-join: "<gold>%player% <yellow>has joined <gold>%server%"

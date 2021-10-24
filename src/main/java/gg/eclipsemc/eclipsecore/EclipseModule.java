@@ -174,27 +174,20 @@ public class EclipseModule implements Listener {
 
     public void saveDocument(Bson filter, Document document) {
         Bukkit.getScheduler().runTaskAsynchronously(this.eclipseCore, () -> {
-            Document res = (Document)this.collection.find(filter).first();
+            Document res = this.collection.find(filter).first();
             if (res == null) {
                 this.collection.insertOne(document);
             } else {
-                this.collection.findOneAndUpdate(filter, (Bson)document);
+                for (final String k : document.keySet()) {
+                    res.append(k, document.get(k));
+                }
+                this.collection.replaceOne(filter, res);
             }
-
         });
     }
 
     public void saveDocument(Bson filter, String key, String newValue) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.eclipseCore, () -> {
-            Document document = new Document(key, newValue);
-            Document res = (Document)this.collection.find(filter).first();
-            if (res == null) {
-                this.collection.insertOne(document);
-            } else {
-                this.collection.findOneAndUpdate(filter, (Bson)document);
-            }
-
-        });
+        this.saveDocument(filter, new Document(key, newValue));
     }
 
     public Document getDocument(Bson filter) {

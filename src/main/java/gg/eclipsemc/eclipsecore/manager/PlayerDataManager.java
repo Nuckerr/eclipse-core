@@ -72,7 +72,6 @@ public class PlayerDataManager {
 
     public void updateDoc(UUID uuid, Document document) {
         collection.replaceOne(new Document("_id", uuid), document);
-
     }
 
     public void addDefault(DefaultData<?> data) {

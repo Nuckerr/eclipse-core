@@ -61,10 +61,10 @@ public class TagModule extends EclipseModule {
     }
 
     private void registerCommands() {
-        this.registerCommand(this.getCommandBuilder("tag", "tags")
+         this.registerCommand(this.getCommandBuilder("tag", "tags")
                 .handler(c -> {
                     EclipsePlayer player = EclipsePlayer.getFromSender(c.getSender());
-                    player.openMenu(new TagMenu(this.getManager()));
+                    player.openMenu(new TagMenu(this.getManager(), player));
                 }));
         this.registerCommand(this.getCommandBuilder("tag", "tags")
                 .argument(StringArgument.of("tag"))

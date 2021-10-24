@@ -18,8 +18,8 @@ public class TagMenu extends PaginatedMenu {
 
     private final TagManager manager;
 
-    public TagMenu(TagManager manager) {
-        super(4, Component.text("Tag menu").color(NamedTextColor.BLACK), manager.getTagsAsItemStacks(), 14);
+    public TagMenu(TagManager manager, EclipsePlayer player) {
+        super(4, Component.text("Tag menu").color(NamedTextColor.BLACK), manager.getTagsAsItemStacks(player), 14);
         this.manager = manager;
     }
 
@@ -33,7 +33,9 @@ public class TagMenu extends PaginatedMenu {
         this.setButton(previousPageButton, 27);
         this.setButton(nextPageButton, 35);
         this.setButton(closeInvButton, 31);
-        this.fillMenu(Material.BLACK_STAINED_GLASS, i -> !(i >= 10 && i <= 25));
+        this.fillMenu(Material.BLACK_STAINED_GLASS_PANE, i -> !(i >= 10 && i <= 25));
+        this.setItem(17, filler);
+        this.setItem(18, filler);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class TagMenu extends PaginatedMenu {
         }else {
             player.sendMessage(Component.text("You dont have permission to equip this tag").color(NamedTextColor.RED));
         }
+        this.close(player.getBukkitPlayer());
     }
 
 }

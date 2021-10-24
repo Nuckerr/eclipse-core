@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import wtf.nucker.simplemenus.adventure.Menu;
 
 import java.util.HashMap;
@@ -86,6 +87,7 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
     }
 
 
+    @NotNull
     public Player getBukkitPlayer() {
         return player;
     }

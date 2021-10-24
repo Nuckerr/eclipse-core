@@ -8,7 +8,10 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
@@ -67,12 +70,12 @@ public class TagManager {
 
             @Override
             public void setName(final String name) {
-                String oldName = this.getName();
                 module.saveDocument(new Document("name", this.getName()), "name", name);
             }
         };
 
-        module.saveDocument(new Document("name", name), new Document("name", name).append("display", tag.getDisplay()));
+        module.saveDocument(new Document("name", name), new Document("name", name).append("display",
+                GsonComponentSerializer.gson().serialize(tag.getDisplay())));
 
         return tag;
     }
@@ -106,7 +109,8 @@ public class TagManager {
         };
     }
 
-    public List<ItemStack> getTagsAsItemStacks() {
+    // FIXME: 24/10/2021 There is an issue with item components being broken with NBT API. Issue reported - https://github.com/tr7zw/Item-NBT-API/issues/143
+    public List<ItemStack> getTagsAsItemStacks(EclipsePlayer player) {
         List<ItemStack> items = new ArrayList<>();
         for (final Tag tag : this.getTags()) {
             ItemStack item = new ItemStack(Material.NAME_TAG);
@@ -119,6 +123,10 @@ public class TagManager {
             lore.add(Component.empty());
             meta.lore(lore);
             meta.setLocalizedName(tag.getName());
+            if(this.getPlayerTag(player).equals(tag)) {
+                meta.addEnchant(Enchantment.BINDING_CURSE, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
             item.setItemMeta(meta);
 
             items.add(item);
