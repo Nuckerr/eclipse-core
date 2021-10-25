@@ -92,6 +92,7 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
         return player;
     }
 
+    @NotNull
     public PlayerData getPlayerData() {
         return data;
     }

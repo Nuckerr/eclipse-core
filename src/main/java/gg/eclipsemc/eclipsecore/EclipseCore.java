@@ -347,4 +347,17 @@ public final class EclipseCore extends JavaPlugin {
         return menuManager;
     }
 
+    public EclipseModule getModule(String identifier) {
+        for (final EclipseModule module : this.modules) {
+            if(module.getName().equals(identifier)) return module;
+        }
+        return null;
+    }
+
+    public EclipseModule getModule(Class<? extends EclipseModule> moduleClazz) {
+        for (final EclipseModule module : modules) {
+            if(module.getClass().equals(moduleClazz)) return module;
+        }
+        return null;
+    }
 }
