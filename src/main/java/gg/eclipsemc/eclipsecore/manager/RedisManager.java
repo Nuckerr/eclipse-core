@@ -92,8 +92,6 @@ public class RedisManager {
         JsonObject object = new JsonObject();
         object.addProperty("identifier", packet.getIdentifier());
         object.add("data", packet.getPacketData());
-        Bukkit.getLogger().info("we got this far");
-
         CompletableFuture.runAsync(() -> pub.publish(channel, new Gson().toJson(object)));
     }
 

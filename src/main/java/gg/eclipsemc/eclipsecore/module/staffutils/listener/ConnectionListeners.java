@@ -38,7 +38,6 @@ public class ConnectionListeners implements Listener {
     public void handleStaffJoinMessages(PlayerJoinEvent event) {
         EclipsePlayer player = EclipsePlayer.getPlayerFromBukkit(event.getPlayer());
         if (player.getBukkitPlayer().hasPermission("eclipsecore.staffutils.staff-messages")) {
-            Bukkit.getLogger().info("perms");
             System.out.println(player.getPlayerData().getBool("isJoinAlert"));
             this.module.sendPacket(new StaffJoinPacket(player, this.module));
         }

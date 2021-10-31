@@ -25,6 +25,7 @@ import gg.eclipsemc.eclipsecore.object.EclipseCommandSender;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import gg.eclipsemc.eclipsecore.object.EclipseSender;
 import gg.eclipsemc.eclipsecore.parser.EclipseModuleParser;
+import gg.eclipsemc.eclipsecore.parser.EclipsePlayerParser;
 import gg.eclipsemc.eclipsecore.parser.argument.EclipseModuleArgument;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
@@ -182,7 +183,7 @@ public final class EclipseCore extends JavaPlugin {
 
         commandSenderMapper = commandSender -> {
             if (commandSender instanceof Player) {
-                return EclipsePlayer.getPlayerFromBukkit(((Player) commandSender).getPlayer());
+                return EclipsePlayer.getPlayerFromBukkit((Player) commandSender);
             } else {
                 return new EclipseCommandSender(commandSender);
             }
@@ -205,6 +206,10 @@ public final class EclipseCore extends JavaPlugin {
         paperCommandManager.getParserRegistry().registerParserSupplier(
                 TypeToken.get(EclipseModule.class),
                 options -> new EclipseModuleParser<>(this)
+        );
+        paperCommandManager.getParserRegistry().registerParserSupplier(
+                TypeToken.get(EclipsePlayer.class),
+                options -> new EclipsePlayerParser<>()
         );
         final Function<ParserParameters, CommandMeta> commandMetaFunction = p ->
                 CommandMeta.simple()

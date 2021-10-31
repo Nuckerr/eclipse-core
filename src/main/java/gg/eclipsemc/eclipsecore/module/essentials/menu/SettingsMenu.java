@@ -42,7 +42,7 @@ public class SettingsMenu extends Menu {
         this.fillMenu();
         this.addListener(event -> {
             EclipsePlayer p = EclipsePlayer.getPlayerByUUID(event.getWhoClicked().getUniqueId());
-            p.playSound(Sound.BLOCK_NOTE_BLOCK_PLING, 100f, 50f);
+            p.playSound(Sound.BLOCK_NOTE_BLOCK_PLING, 2f, 2f);
         });
     }
 

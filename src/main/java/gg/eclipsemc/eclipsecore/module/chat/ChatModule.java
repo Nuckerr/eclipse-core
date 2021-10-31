@@ -4,6 +4,7 @@ import cloud.commandframework.bukkit.parsers.PlayerArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
+import gg.eclipsemc.eclipsecore.module.chat.command.MessageCommand;
 import gg.eclipsemc.eclipsecore.module.chat.listener.ChatListener;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
@@ -117,6 +118,8 @@ public class ChatModule extends EclipseModule {
                         c.getSender().sendMessage(Component.text("You must be in game to run this command").color(NamedTextColor.RED));
                     }
                 }));
+
+        this.registerCommand(new MessageCommand());
     }
 
     @Override
