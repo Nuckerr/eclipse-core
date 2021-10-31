@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import wtf.nucker.simplemenus.adventure.Menu;
@@ -75,6 +76,22 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
 
     public void openMenu(Menu menu) {
         menu.switchMenu(this.getBukkitPlayer());
+    }
+
+    public void playSound(Sound sound, float volume, float pitch) {
+        this.player.playSound(player.getLocation(), sound, volume, pitch);
+    }
+
+    public void playSound(Sound sound, float volume) {
+        this.playSound(sound, volume, 1f);
+    }
+
+    public void playSound(Sound sound) {
+        this.playSound(sound, 1f, 1f);
+    }
+
+    public void playSoundPitch(Sound sound, float pitch) {
+        this.playSound(sound, 1f, pitch);
     }
 
     public void sendMessage(Component component) {

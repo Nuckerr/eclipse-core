@@ -29,6 +29,7 @@ public class ChatModule extends EclipseModule {
     public void onEnable() {
         registerListener(new ChatListener());
         onReload();
+        this.registerDefaults();
         super.onEnable();
     }
 

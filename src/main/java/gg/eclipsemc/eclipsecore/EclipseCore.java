@@ -109,7 +109,7 @@ public final class EclipseCore extends JavaPlugin {
         expansion.register();
         menuManager = new MenuManager(this);
         MenuSettings settings = new MenuSettings();
-        settings.setDefaultFillerItem(new ItemBuilder().setType(Material.BLACK_STAINED_GLASS).setName(Component.empty()).build());
+        settings.setDefaultFillerItem(new ItemBuilder().setType(Material.BLACK_STAINED_GLASS_PANE).setName(Component.empty()).build());
         menuManager.setSettings(settings);
 
         getServer().getPluginManager().registerEvents(new Listener() {

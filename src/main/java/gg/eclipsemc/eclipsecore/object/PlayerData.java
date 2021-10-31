@@ -42,7 +42,11 @@ public class PlayerData {
     }
 
     public boolean getBool(String key) {
-        return document.getBoolean(key);
+        Boolean res = document.getBoolean(key);
+        if(res == null) {
+            return false;
+        }
+        return res;
     }
 
     public <T> List<T> getListOf(String key, Class<T> clazz) {
