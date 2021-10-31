@@ -22,7 +22,7 @@ public class ChatRenderer implements io.papermc.paper.chat.ChatRenderer {
     public static String nameFormat;
     public static String nameHover;
 
-    Component message;
+    private Component message;
 
 
     @Override

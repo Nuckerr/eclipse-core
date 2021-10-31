@@ -91,7 +91,7 @@ public class SettingsMenu extends Menu {
                 .append(privateMessagesPing ? Component.text("Enabled").color(NamedTextColor.GREEN)
                         : Component.text("Disabled").color(NamedTextColor.RED)));
 
-        ItemStack item = new ItemBuilder().setName(Component.text("Private messages").color(privateMessagesPing ?
+        ItemStack item = new ItemBuilder().setName(Component.text("Private message's ping").color(privateMessagesPing ?
                 NamedTextColor.GREEN : NamedTextColor.RED)).setType(Material.NOTE_BLOCK).build();
         item.editMeta(meta -> meta.lore(lore));
         item.editMeta(meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS));
@@ -122,7 +122,7 @@ public class SettingsMenu extends Menu {
                 .append(autoBroadcasts ? Component.text("Enabled").color(NamedTextColor.GREEN)
                         : Component.text("Disabled").color(NamedTextColor.RED)));
 
-        ItemStack item = new ItemBuilder().setName(Component.text("Private messages").color(autoBroadcasts ?
+        ItemStack item = new ItemBuilder().setName(Component.text("Auto broadcasts").color(autoBroadcasts ?
                 NamedTextColor.GREEN : NamedTextColor.RED)).setType(Material.OAK_SIGN).build();
         item.editMeta(meta -> meta.lore(lore));
         item.editMeta(meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS));
@@ -195,7 +195,7 @@ public class SettingsMenu extends Menu {
                 .append(mentionPings ? Component.text("Enabled").color(NamedTextColor.GRAY)
                         : Component.text("Disabled").color(NamedTextColor.RED)));
 
-        ItemStack item = new ItemBuilder().setName(Component.text("Private messages").color(mentionPings ?
+        ItemStack item = new ItemBuilder().setName(Component.text("Toggle mention pings").color(mentionPings ?
                 NamedTextColor.GREEN : NamedTextColor.RED)).setType(Material.EXPERIENCE_BOTTLE).build();
         item.editMeta(meta -> meta.lore(lore));
         item.editMeta(meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS));

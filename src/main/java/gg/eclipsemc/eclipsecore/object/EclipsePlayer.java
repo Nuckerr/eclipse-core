@@ -13,6 +13,7 @@ import wtf.nucker.simplemenus.adventure.Menu;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -120,6 +121,22 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
 
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if(o instanceof EclipsePlayer player) {
+            return player.getUniqueId().equals(this.getUniqueId());
+        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EclipsePlayer player1 = (EclipsePlayer) o;
+        return Objects.equals(player, player1.player) && Objects.equals(data, player1.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(player, data);
     }
 
 }

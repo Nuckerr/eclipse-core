@@ -22,7 +22,6 @@ import java.util.Queue;
 public final class EclipsePlayerParser<C> implements ArgumentParser<C, EclipsePlayer> {
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NonNull ArgumentParseResult<EclipsePlayer> parse(
             final @NonNull CommandContext<C> commandContext,
             final @NonNull Queue<@NonNull String> inputQueue

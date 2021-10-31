@@ -1,5 +1,7 @@
 package gg.eclipsemc.eclipsecore.module.chat;
 
+import cloud.commandframework.arguments.standard.BooleanArgument;
+import cloud.commandframework.arguments.standard.IntegerArgument;
 import cloud.commandframework.bukkit.parsers.PlayerArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;
 import gg.eclipsemc.eclipsecore.EclipseModule;
@@ -9,8 +11,8 @@ import gg.eclipsemc.eclipsecore.module.chat.listener.ChatListener;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +20,13 @@ import java.util.UUID;
 
 public class ChatModule extends EclipseModule {
 
+
+    private int slowMode = 0;
+    private final List<UUID> slowModeCooldown;
+
     public ChatModule(final EclipseCore eclipseCore) {
         super(eclipseCore);
+        this.slowModeCooldown = new ArrayList<>();
     }
 
     @Override
@@ -34,7 +41,7 @@ public class ChatModule extends EclipseModule {
 
     @Override
     public void onEnable() {
-        registerListener(new ChatListener());
+        registerListener(new ChatListener(this));
         onReload();
         this.registerDefaults();
         this.registerCommands();
@@ -119,6 +126,20 @@ public class ChatModule extends EclipseModule {
                     }
                 }));
 
+        // There is no mutechat as that is handled in litebans
+        this.registerCommand(this.getCommandBuilder("slowmode", "slowm", "smode")
+                .permission("eclipsecore.chat.slowmode")
+                .argument(IntegerArgument.optional("amount"))
+                .handler(c -> {
+                    if(!c.getOptional("amount").isPresent() || c.getOrDefault("amount", 0) == 0) {
+                        this.setSlowMode(0);
+                        Bukkit.broadcast(Component.text("Slow mode has been toggled off").color(NamedTextColor.GREEN));
+                    }else {
+                        this.setSlowMode(c.get("amount"));
+                        Bukkit.broadcast(Component.text("Slow mode has been set to " + c.get("amount") + " seconds").color(NamedTextColor.RED));
+                    }
+                }));
+
         this.registerCommand(new MessageCommand());
     }
 
@@ -129,4 +150,23 @@ public class ChatModule extends EclipseModule {
         super.onReload();
     }
 
+
+    public int getSlowMode() {
+        return slowMode;
+    }
+
+    public void setSlowMode(final int slowMode) {
+        this.slowMode = slowMode;
+    }
+
+    public List<UUID> getSlowModeCooldown() {
+        return slowModeCooldown;
+    }
+
+    public void addToCache(UUID uuid) {
+        this.slowModeCooldown.add(uuid);
+        this.scheduleAsync(() -> {
+            this.slowModeCooldown.remove(uuid);
+        }, 20L * this.getSlowMode());
+    }
 }
