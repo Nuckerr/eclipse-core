@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import wtf.nucker.simplemenus.adventure.Menu;
@@ -44,11 +45,14 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
         return null;
     }
 
+    public static EclipsePlayer getFromCraftPlayer(CraftPlayer player) {
+        return EclipsePlayer.getPlayerByUUID(player.getUniqueId());
+    }
+
     private static boolean cacheContainsUUID(UUID uuid) {
         for (final UUID id : getPlayerCache().keySet()) {
             if(uuid == id) return true;
         }
-
         return false;
     }
 

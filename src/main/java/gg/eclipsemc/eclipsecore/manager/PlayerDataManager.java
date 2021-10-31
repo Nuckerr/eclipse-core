@@ -6,7 +6,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -36,8 +36,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,7 +49,6 @@ import wtf.nucker.simplemenus.adventure.utils.ItemBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Level;
 

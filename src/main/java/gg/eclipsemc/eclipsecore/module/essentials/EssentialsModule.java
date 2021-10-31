@@ -11,9 +11,7 @@ import gg.eclipsemc.eclipsecore.module.essentials.command.GamemodeCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.PluginsCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.SettingsCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.TimeCommand;
-import gg.eclipsemc.eclipsecore.module.essentials.menu.SettingsMenu;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 

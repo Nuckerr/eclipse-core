@@ -15,8 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class ChatRenderer implements io.papermc.paper.chat.ChatRenderer {
