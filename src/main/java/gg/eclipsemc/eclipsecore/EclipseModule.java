@@ -191,7 +191,7 @@ public class EclipseModule implements Listener {
     }
 
     public Document getDocument(Bson filter) {
-        return (Document)this.collection.find(filter).first();
+        return this.collection.find(filter).first();
     }
 
     public void sendPacket(RedisPacket packet) {

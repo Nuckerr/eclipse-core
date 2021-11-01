@@ -1,6 +1,5 @@
 package gg.eclipsemc.eclipsecore.module.chat;
 
-import cloud.commandframework.arguments.standard.BooleanArgument;
 import cloud.commandframework.arguments.standard.IntegerArgument;
 import cloud.commandframework.bukkit.parsers.PlayerArgument;
 import gg.eclipsemc.eclipsecore.EclipseCore;

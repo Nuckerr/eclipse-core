@@ -6,10 +6,12 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.specifier.Greedy;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import gg.eclipsemc.eclipsecore.event.PrivateMessageEvent;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 
 import java.util.UUID;
@@ -34,12 +36,15 @@ public class MessageCommand {
         MessageStatus status = this.sendDM(sender, target, message);
         if(sender.equals(target)) {
             sender.sendMessage(Component.text("You can't message your self, silly").color(NamedTextColor.RED));
+            return;
         }
 
         switch (status) {
             case IGNORED -> sender.sendMessage(Component.text(target.getBukkitPlayer().getName() + " is ignoring private messages").color(NamedTextColor.RED));
 
-            case FAILED -> sender.sendMessage(Component.text("Unexpected error occurred while executing the command").color(NamedTextColor.RED));
+            case FAILED_UNKNOWN -> sender.sendMessage(Component.text("Unexpected error occurred while executing the command").color(NamedTextColor.RED));
+
+            case FAILED -> sender.sendMessage(Component.text("Unknown error occurred").color(NamedTextColor.RED));
 
             // Ignore success as that is all handled in the method
         }
@@ -54,6 +59,8 @@ public class MessageCommand {
             case IGNORED -> sender.sendMessage(Component.text("This player is ignoring private messages").color(NamedTextColor.RED));
 
             case FAILED -> sender.sendMessage(Component.text("You have not messaged anyone in the last 5 minutes").color(NamedTextColor.RED));
+
+            case FAILED_UNKNOWN -> sender.sendMessage(Component.text("Unexpected error occurred while executing the command").color(NamedTextColor.RED));
 
             // Ignore success as that is all handled in the method
         }
@@ -78,30 +85,40 @@ public class MessageCommand {
                     .append(Component.text(")").color(NamedTextColor.GOLD))
                     .append(Component.text(": ").color(NamedTextColor.GRAY))
                     .append(playerMessage.colorIfAbsent(NamedTextColor.YELLOW));
+
+            Component componentFrom = Component.text("(").color(NamedTextColor.GOLD)
+                    .append(Component.text("To " + to.getBukkitPlayer().getName()).color(NamedTextColor.YELLOW))
+                    .append(Component.text(")").color(NamedTextColor.GOLD))
+                    .append(Component.text(": ").color(NamedTextColor.GRAY))
+                    .append(playerMessage.colorIfAbsent(NamedTextColor.YELLOW));
+
+            PrivateMessageEvent event = new PrivateMessageEvent(from, to, playerMessage);
+            Bukkit.getPluginManager().callEvent(event);
+
+
+            if(event.isCancelled()) return MessageStatus.FAILED_UNKNOWN;
             to.sendMessage(componentTo);
             if(to.getPlayerData().getBool("privateMessagesPing")) {
                 to.playSound(Sound.BLOCK_NOTE_BLOCK_PLING, 2f, 2f);
             }
-
-            Component componentFrom = Component.text("(").color(NamedTextColor.GOLD)
-                    .append(Component.text("To " + to.getBukkitPlayer().getName()).color(NamedTextColor.YELLOW))
-                    .append(Component.text(") ").color(NamedTextColor.GOLD))
-                    .append(Component.text(":").color(NamedTextColor.GRAY))
-                    .append(playerMessage.colorIfAbsent(NamedTextColor.YELLOW));
             from.sendMessage(componentFrom);
-
             this.updateReplies(from, to);
             return MessageStatus.SUCCESS;
         }catch (Exception e) {
             e.printStackTrace();
-            return MessageStatus.FAILED;
+            return MessageStatus.FAILED_UNKNOWN;
         }
     }
 
     private MessageStatus sendDM(EclipsePlayer from, String message) {
-        if(this.replies.getIfPresent(from.getUniqueId()) == null) return MessageStatus.FAILED;
-        EclipsePlayer to = EclipsePlayer.getPlayerByUUID(replies.getIfPresent(from.getUniqueId()));
-        return this.sendDM(from, to, message);
+        try {
+            if(this.replies.getIfPresent(from.getUniqueId()) == null) return MessageStatus.FAILED;
+            EclipsePlayer to = EclipsePlayer.getPlayerByUUID(replies.getIfPresent(from.getUniqueId()));
+            return this.sendDM(from, to, message);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return MessageStatus.FAILED_UNKNOWN;
+        }
     }
 
     private void updateReplies(EclipsePlayer from, EclipsePlayer to) {
@@ -114,6 +131,7 @@ public class MessageCommand {
     private enum MessageStatus {
         SUCCESS,
         IGNORED,
-        FAILED
+        FAILED,
+        FAILED_UNKNOWN
     }
 }

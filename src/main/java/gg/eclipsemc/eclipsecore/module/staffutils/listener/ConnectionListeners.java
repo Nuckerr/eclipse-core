@@ -6,7 +6,6 @@ import gg.eclipsemc.eclipsecore.module.staffutils.StaffUtilsModule;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffJoinPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffQuitPacket;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

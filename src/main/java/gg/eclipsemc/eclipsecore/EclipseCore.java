@@ -4,6 +4,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.ParserParameters;
 import cloud.commandframework.arguments.parser.StandardParameters;
+import cloud.commandframework.bukkit.parsers.ItemStackArgument;
 import cloud.commandframework.captions.Caption;
 import cloud.commandframework.captions.CaptionRegistry;
 import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
@@ -43,6 +44,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import wtf.nucker.simplemenus.adventure.MenuManager;
 import wtf.nucker.simplemenus.adventure.MenuSettings;
@@ -210,6 +212,10 @@ public final class EclipseCore extends JavaPlugin {
         paperCommandManager.getParserRegistry().registerParserSupplier(
                 TypeToken.get(EclipsePlayer.class),
                 options -> new EclipsePlayerParser<>()
+        );
+        paperCommandManager.getParserRegistry().registerParserSupplier(
+                TypeToken.get(ItemStack.class),
+                options -> new ItemStackArgument.Parser<>()
         );
         final Function<ParserParameters, CommandMeta> commandMetaFunction = p ->
                 CommandMeta.simple()

@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -126,6 +127,8 @@ public class EclipsePlayer extends OfflineEclipsePlayer implements EclipseSender
     @Override
     public boolean equals(final Object o) {
         if(o instanceof EclipsePlayer player) {
+            return player.getUniqueId().equals(this.getUniqueId());
+        }else if(o instanceof OfflinePlayer player) {
             return player.getUniqueId().equals(this.getUniqueId());
         }
         if (this == o) return true;

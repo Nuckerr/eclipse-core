@@ -8,8 +8,10 @@ import gg.eclipsemc.eclipsecore.module.essentials.command.CraftAnvilCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.FeedRepairHealCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.FlyCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.GamemodeCommand;
+import gg.eclipsemc.eclipsecore.module.essentials.command.GiveCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.PluginsCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.SettingsCommand;
+import gg.eclipsemc.eclipsecore.module.essentials.command.SocialsCommand;
 import gg.eclipsemc.eclipsecore.module.essentials.command.TimeCommand;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 
@@ -44,6 +46,9 @@ public class EssentialsModule extends EclipseModule {
         registerCommand(new GamemodeCommand());
         registerCommand(new TimeCommand());
         registerCommand(new SettingsCommand(eclipseCore));
+        registerCommand(new SocialsCommand(this));
+        registerCommand(new GiveCommand());
+
         eclipseCore.getPlaceholderAPIExpansion().registerPlaceholders(new PAPIExpansion.Placeholder() {
             @Override
             public String requestPlaceholder(final EclipsePlayer player, final String placeholder) {
