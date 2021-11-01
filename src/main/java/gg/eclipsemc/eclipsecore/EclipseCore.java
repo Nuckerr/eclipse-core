@@ -15,6 +15,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
+import gg.eclipsemc.eclipsecore.manager.BungeeMessagingManager;
 import gg.eclipsemc.eclipsecore.manager.PlayerDataManager;
 import gg.eclipsemc.eclipsecore.manager.RedisManager;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
@@ -64,6 +65,7 @@ public final class EclipseCore extends JavaPlugin {
     private PAPIExpansion expansion;
     private RedisManager redisManager;
     private MenuManager menuManager;
+    private BungeeMessagingManager messagingManager;
 
     public final Set<EclipseModule> modules = new HashSet<>();
 
@@ -125,6 +127,8 @@ public final class EclipseCore extends JavaPlugin {
             }
 
             }, this);
+
+        this.messagingManager = new BungeeMessagingManager(this);
 
         enableStartupModules();
     }
@@ -353,6 +357,10 @@ public final class EclipseCore extends JavaPlugin {
 
     public MenuManager getMenuManager() {
         return menuManager;
+    }
+
+    public BungeeMessagingManager getMessagingManager() {
+        return messagingManager;
     }
 
     public EclipseModule getModule(String identifier) {

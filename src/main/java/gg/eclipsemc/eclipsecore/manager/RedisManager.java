@@ -23,6 +23,7 @@ public class RedisManager {
 
     private final EclipseCore core;
     private JedisPool pool;
+
     private Jedis pub;
     private Jedis sub;
     private Map<String, RedisPacket> packets;
@@ -105,5 +106,9 @@ public class RedisManager {
 
     public Jedis getPub() {
         return pub;
+    }
+
+    public Jedis getSub() {
+        return sub;
     }
 }
