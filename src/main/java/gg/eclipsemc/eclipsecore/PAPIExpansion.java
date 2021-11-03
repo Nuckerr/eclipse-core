@@ -7,7 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nucker
@@ -15,12 +17,12 @@ import java.util.List;
 public class PAPIExpansion extends PlaceholderExpansion {
 
     private final EclipseCore core;
-    private final List<Placeholder> placeholders;
+    private final Set<Placeholder> placeholders;
 
 
     public PAPIExpansion(EclipseCore core) {
         this.core = core;
-        this.placeholders = new ArrayList<>();
+        this.placeholders = new HashSet<>();
     }
 
     @Override
@@ -44,24 +46,13 @@ public class PAPIExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String getRequiredPlugin() {
-        return "KitPvPPlus";
-    }
-
-    @Override
-    public boolean canRegister() {
-        return true;
-    }
-
-    @Override
-    public String onPlaceholderRequest(Player player, @NotNull String params) {
-        String res = null;
+    public String onPlaceholderRequest(Player player, @NotNull String identifier) {
         EclipsePlayer eclipsePlayer = EclipsePlayer.getPlayerFromBukkit(player);
         for (final Placeholder placeholder : this.placeholders) {
-            res = placeholder.requestPlaceholder(eclipsePlayer, params);
+            String papi = placeholder.requestPlaceholder(eclipsePlayer, identifier);
+            if(papi != null) return papi;
         }
-
-        return res;
+        return null;
     }
 
 

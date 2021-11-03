@@ -132,6 +132,7 @@ public class ChatModule extends EclipseModule {
                 .handler(c -> {
                     if(!c.getOptional("amount").isPresent() || c.getOrDefault("amount", 0) == 0) {
                         this.setSlowMode(0);
+                        this.slowModeCooldown.removeIf(uuid -> true);
                         Bukkit.broadcast(Component.text("Slow mode has been toggled off").color(NamedTextColor.GREEN));
                     }else {
                         this.setSlowMode(c.get("amount"));

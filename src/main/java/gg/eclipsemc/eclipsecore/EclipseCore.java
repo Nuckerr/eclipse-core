@@ -36,6 +36,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -66,6 +67,7 @@ public final class EclipseCore extends JavaPlugin {
     private RedisManager redisManager;
     private MenuManager menuManager;
     private BungeeMessagingManager messagingManager;
+    private LuckPerms luckPerms;
 
     public final Set<EclipseModule> modules = new HashSet<>();
 
@@ -108,7 +110,12 @@ public final class EclipseCore extends JavaPlugin {
         playerDataManager = new PlayerDataManager(this);
 
         expansion = new PAPIExpansion(this); // Register placeholder api expansion
-        expansion.register();
+        boolean registered = expansion.register();
+        if(registered)
+            this.getLogger().info("Placeholder expansion has been registered");
+        else
+            this.getLogger().log(Level.WARNING, "Unable to register placeholder expansion");
+        this.luckPerms = Bukkit.getServicesManager().getRegistration(LuckPerms.class).getProvider();
         menuManager = new MenuManager(this);
         MenuSettings settings = new MenuSettings();
         settings.setDefaultFillerItem(new ItemBuilder().setType(Material.BLACK_STAINED_GLASS_PANE).setName(Component.empty()).build());
@@ -128,7 +135,7 @@ public final class EclipseCore extends JavaPlugin {
 
             }, this);
 
-        this.messagingManager = new BungeeMessagingManager(this);
+        //this.messagingManager = new BungeeMessagingManager(this);
 
         enableStartupModules();
     }
@@ -361,6 +368,10 @@ public final class EclipseCore extends JavaPlugin {
 
     public BungeeMessagingManager getMessagingManager() {
         return messagingManager;
+    }
+
+    public LuckPerms getLuckPerms() {
+        return luckPerms;
     }
 
     public EclipseModule getModule(String identifier) {

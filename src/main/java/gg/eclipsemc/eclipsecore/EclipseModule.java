@@ -206,4 +206,9 @@ public class EclipseModule implements Listener {
     public void deleteDocument(Bson filter) {
         this.collection.findOneAndDelete(filter);
     }
+
+    public EclipseCore getEclipseCore() {
+        return eclipseCore;
+    }
+
 }

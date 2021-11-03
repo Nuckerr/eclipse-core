@@ -13,6 +13,7 @@ import gg.eclipsemc.eclipsecore.module.staffutils.packet.ServerOnlinePacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffChatPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffJoinPacket;
 import gg.eclipsemc.eclipsecore.module.staffutils.packet.StaffQuitPacket;
+import gg.eclipsemc.eclipsecore.module.staffutils.vanish.VanishManager;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,12 +41,15 @@ public class StaffUtilsModule extends EclipseModule {
         return "StaffUtils";
     }
 
+    private VanishManager vanishManager;
+
     @Override
     protected void onEnable() {
         this.registerDefaults();
         this.registerPackets();
         this.registerCommands();
         this.registerListener(new ConnectionListeners(this));
+        this.vanishManager = new VanishManager(this);
 
         this.schedule(() -> this.sendPacket(new ServerOnlinePacket(this)), 0L); // First tick doesn't happen till after the
         // server is finished loading. Thus, this is called when the server is finished loading
@@ -174,6 +178,9 @@ public class StaffUtilsModule extends EclipseModule {
                 }));
     }
 
+    public VanishManager getVanishManager() {
+        return vanishManager;
+    }
 
     public String getServerName() {
         return this.getConfig().getString("server-name");
