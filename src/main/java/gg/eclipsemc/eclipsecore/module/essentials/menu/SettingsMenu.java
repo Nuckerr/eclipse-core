@@ -1,6 +1,7 @@
 package gg.eclipsemc.eclipsecore.module.essentials.menu;
 
 import gg.eclipsemc.eclipsecore.EclipseCore;
+import gg.eclipsemc.eclipsecore.EclipseModule;
 import gg.eclipsemc.eclipsecore.module.chat.ChatModule;
 import gg.eclipsemc.eclipsecore.object.EclipsePlayer;
 import net.kyori.adventure.text.Component;
@@ -37,7 +38,7 @@ public class SettingsMenu extends Menu {
         this.addAutoBroadcasts();
         this.addChatToggle();
         this.addMentionPings();
-        //TODO: One more setting field to fill the menu
+        this.addManageIgnoreList();
 
         this.fillMenu();
         this.addListener(event -> {
@@ -109,6 +110,31 @@ public class SettingsMenu extends Menu {
                 player.getBukkitPlayer().closeInventory();
             }
         }, 13);
+    }
+
+    private void addManageIgnoreList() {
+        EclipseModule module = core.getModule(ChatModule.class);
+        if(module == null)
+            throw new NullPointerException("Chat module is null");
+        if(!module.isEnabled()) return;
+
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.empty());
+        lore.add(Component.text("Click here to manage").color(NamedTextColor.GRAY));
+        lore.add(Component.text("your ignore list").color(NamedTextColor.GRAY));
+        lore.add(Component.empty());
+
+        ItemStack item =
+                new ItemBuilder().setName(Component.text("Manage ignore list").color(NamedTextColor.GREEN)).setType(Material.ANVIL).build();
+        item.editMeta(meta -> meta.lore(lore));
+
+        this.setButton(new Button(item) {
+            @Override
+            public void onClick(final InventoryClickEvent event) {
+                EclipsePlayer player = EclipsePlayer.getPlayerByUUID(event.getWhoClicked().getUniqueId());
+                new IgnoreListMenu(player).open(player.getBukkitPlayer());
+            }
+        }, 16);
     }
 
     private void addAutoBroadcasts() {

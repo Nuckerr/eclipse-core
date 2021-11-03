@@ -53,6 +53,22 @@ public class PlayerData {
         return document.getList(key, clazz);
     }
 
+    public List<Object> getList(String key) {
+        return document.getList(key, Object.class);
+    }
+
+    public void addToList(String key, Object val) {
+        List<Object> list = this.getList(key);
+        list.add(val);
+        this.set(key, list);
+    }
+
+    public void removeFromList(String key, Object val) {
+        List<Object> list = this.getList(key);
+        list.remove(val);
+        this.set(key, val);
+    }
+
     public <T> T getObject(String key, Class<T> clazz) {
         return document.get(key, clazz);
     }
